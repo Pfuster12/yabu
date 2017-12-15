@@ -1,4 +1,4 @@
-# yabu
+# Yabu
 Language learning app.
 
 Progress your Japanese through a fully-supported reading experience.
