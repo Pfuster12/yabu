@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Dimensions for phone-sized devices-->
+<resources>
+    <!-- App bar height in every screen, showing titles -->
+    <dimen name="app_bar_height">46dp</dimen>
+    <!-- Margin between titles in Start-Up screen -->
+    <dimen name="start_up_margin_top">32dp</dimen>
+    <!-- End Margin between astronaut logo -->
+    <dimen name="image_end_margin">120dp</dimen>
+</resources>

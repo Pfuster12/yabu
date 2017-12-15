@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Yabu</string>
+    <!-- Start up description -->
+    <string name="start_up_description">Read Japanese text, open-source.</string>
+    <!-- Start up Sign Up -->
+    <string name="start_up_sign_up">Sign up</string>
+    <!-- Start up Continue without Sign Up -->
+    <string name="start_up_continue_no_sign">Or continue without signing&#8230;</string>
+    <!-- Main screens titles -->
+    <string name="reading_page_title">Reading</string>
+    <string name="review_words_page_title">Review Words</string>
+    <string name="your_stats_page_title">Your Stats</string>
+</resources>
