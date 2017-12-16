@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.toolbar.view.*
 
 /**
  * Reading list fragment, to be paired with ViewPager for tab slide animations in Main Activity.
- * This fragment displays a list of articles extracted from the Wiki API.
+ * This fragment displays a list of articles extracted from the WikiUtils API.
  */
 class ReadingFragment : Fragment() {
 
