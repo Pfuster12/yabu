@@ -1,7 +1,5 @@
 package com.yabu.android.yabu.ui
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -26,12 +24,16 @@ class ReviewWordsFragment : Fragment() {
         // Grab the root view inflated for the fragment.
         val rootView: View = inflater!!
                 .inflate(R.layout.fragment_review_words, container, false)
+        setToolbarTitle(rootView)
+        // Return the inflated view to complete the onCreate process.
+        return rootView
+    }
+
+    private fun setToolbarTitle(rootView: View) {
         // Grab the title of the toolbar.
         val toolbarTitle: TextView = rootView
                 .layout_toolbar.findViewById(R.id.toolbar_title)
         // Set the title of the toolbar to the Reading tab.
         toolbarTitle.text = getString(R.string.review_words_page_title)
-        // Return the inflated view to complete the onCreate process.
-        return rootView
     }
 }

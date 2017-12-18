@@ -34,6 +34,9 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     // Lifecycle, LiveData and ViewModel components
     implementation "android.arch.lifecycle:extensions:1.0.0"
+    // Retrofit library dependencies
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
     // Testing dependencies
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'

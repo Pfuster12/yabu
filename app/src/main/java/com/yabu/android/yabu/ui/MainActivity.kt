@@ -1,5 +1,6 @@
 package com.yabu.android.yabu.ui
 
+import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.TabLayout
@@ -28,6 +29,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Setup the TabLayout with the ViewPager with helper function.
+        setupTabWithViewPager()
+    }
+
+    /**
+     * Helper function to setup Tab Layout with ViewPager adapter in activity_main, and creates
+     * and sets a tab selected listener to change icon colours to the primary color.
+     */
+    private fun setupTabWithViewPager() {
         // Set the adapter to the view pager in the xml layout, passing the support fragment manager.
         pager.adapter = TabPagerAdapter(supportFragmentManager)
         // Set the Tab layout with the ViewPager. tab_layout comes from the kotlinx import which
@@ -39,7 +49,6 @@ class MainActivity : AppCompatActivity() {
         setTabLayout(tab_layout)
         // Implement the Tab listener.
         val tabListener = object : TabLayout.OnTabSelectedListener {
-
             /**
              * Override TabSelected to change the icon color on selected.
              */
@@ -48,7 +57,6 @@ class MainActivity : AppCompatActivity() {
                 tab?.icon?.setTint(ContextCompat
                         .getColor(this@MainActivity, R.color.colorPrimary))
             }
-
             /**
              * Override TabReselected to change the icon color on reselected.
              */
@@ -57,7 +65,6 @@ class MainActivity : AppCompatActivity() {
                 tab?.icon?.setTint(ContextCompat
                         .getColor(this@MainActivity, R.color.colorPrimary))
             }
-
             /**
              * Override TabUnselected to change the icon color back.
              */
