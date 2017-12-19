@@ -1,4 +1,4 @@
-package api
+package repository
 
 import android.net.Uri
 import java.net.URL
@@ -12,7 +12,7 @@ import java.net.URL
 class WikiUtils {
 
     // API endpoint address for Japanese Wiki API
-    private val endpoint: String = "en.wikipedia.org/w/api.php"
+    val endpoint: String = "en.wikipedia.org/w/api.php"
 
     /**
      * Utility function to build a valid API call query to the endpoint specified above. Other

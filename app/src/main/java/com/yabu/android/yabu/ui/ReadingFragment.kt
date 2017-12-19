@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.yabu.android.yabu.R
-import data.WikiExtractsViewModel
+import viewmodel.WikiExtractsViewModel
 import kotlinx.android.synthetic.main.fragment_reading.*
 import kotlinx.android.synthetic.main.fragment_reading.view.*
 import pojos.WikiExtract
@@ -40,8 +40,8 @@ class ReadingFragment : Fragment() {
         mModel.loadExtracts()
 
         // Create the observer which updates the UI.
-        val observer: Observer<Array<WikiExtract>> = Observer { extracts ->
-            test_text_reading.text = extracts!![0].titleExtract
+        val observer: Observer<WikiExtract> = Observer { extract ->
+            test_text_reading.text = extract?.titleExtract
         }
 
         // Observe the LiveData, passing in the fragment as the LifecycleOwner and the observer.
