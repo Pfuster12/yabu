@@ -15,6 +15,9 @@ import kotlinx.android.synthetic.main.fragment_reading.view.*
  */
 class UserFragment : Fragment() {
 
+    /**
+     * Override function for the onCreateView lifecycle of the activity.
+     */
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Grab the root view inflated for the fragment.
@@ -25,6 +28,9 @@ class UserFragment : Fragment() {
         return rootView
     }
 
+    /**
+     * Helper function to set toolbar to the User title.
+     */
     private fun setToolbarTitle(rootView: View) {
         // Grab the title of the toolbar.
         val toolbarTitle: TextView = rootView

@@ -17,20 +17,26 @@ import java.util.logging.Logger
  * The repo implements the Retrofit Callback interface to override what happens on response
  * and on failure to the async launched by Call<T>.enqueue()
  */
-class WikiExtractRepository : Callback<WikiExtract> {
+class WikiExtractRepository : Callback<String> {
 
     companion object {
-        val log = Logger.getLogger(WikiExtractRepository::class.java.simpleName)
+        val log: Logger? = Logger.getLogger(WikiExtractRepository::class.java.simpleName)
     }
 
     // Create a service instance from the companion object function.
-    val apiService by lazy { WikiAPIService.create() }
+    private val apiService by lazy { WikiAPIService.create() }
 
-    val data: MutableLiveData<WikiExtract> = MutableLiveData()
+    // Variable for the LiveData object to be set in the response callback of Retrofit.
+    val data: MutableLiveData<MutableList<WikiExtract>> = MutableLiveData()
 
-    fun getExtracts(titles: String): LiveData<WikiExtract> {
+    /**
+     * Repo function to launch an async through the retrofit Call and return the LiveData
+     * object to which the results will be set in the onResponse callbacks.
+     */
+    fun getExtracts(titles: String): LiveData<MutableList<WikiExtract>> {
         // Each call can make an async http request to the wiki server.
-        val extractsCall: Call<WikiExtract> = apiService.requestExtracts(titles)
+        val extractsCall: Call<String> = apiService.requestExtracts(titles)
+        // Enqueue a call to an async.
         extractsCall.enqueue(this@WikiExtractRepository)
         return data
     }
@@ -38,14 +44,17 @@ class WikiExtractRepository : Callback<WikiExtract> {
     /**
      * Override function for onFailure callback of our http request.
      */
-    override fun onFailure(call: Call<WikiExtract>?, t: Throwable?) {
-        log.warning("Http request failed")
+    override fun onFailure(call: Call<String>, t: Throwable?) {
+        log?.warning("Http request failed")
     }
 
     /**
-     * Override function for onResponse callback of our http request.
+     * Override function for onResponse callback of our http request. onResponse returns a
+     * Response object from okHTTP in String format through the Scalar converter passed in
+     * the retrofit object for us to parse the JSON. Once parsed data is set as a wikiExtract list.
      */
-    override fun onResponse(call: Call<WikiExtract>?, response: Response<WikiExtract>?) {
-        data.value = response?.body()
+    override fun onResponse(call: Call<String>, response: Response<String>?) {
+        val jsonString = response?.body()
+        data.value = JsonUtils.getUtils().parseJson(jsonString)
     }
 }

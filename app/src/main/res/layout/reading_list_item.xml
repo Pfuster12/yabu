@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/list_item_thumbnail"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintDimensionRatio="4"
+        android:src="@color/colorPrimary"/>
+
+    <TextView
+        android:id="@+id/list_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        tools:text="Testing Reading fragment."
+        style="@style/TextAppearance.AppCompat.Title"
+        app:layout_constraintStart_toStartOf="@id/list_item_thumbnail"
+        app:layout_constraintTop_toBottomOf="@id/list_item_thumbnail" />
+
+    <TextView
+        android:id="@+id/list_item_extract"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingBottom="8dp"
+        tools:text="This is the first few lines of the article. They will be a max lines of 2."
+        style="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintStart_toStartOf="@id/list_item_thumbnail"
+        app:layout_constraintTop_toBottomOf="@id/list_item_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:maxLines="3"/>
+
+</android.support.constraint.ConstraintLayout>

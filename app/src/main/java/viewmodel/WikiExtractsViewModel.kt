@@ -10,24 +10,19 @@ import repository.WikiExtractRepository
  * UI controllers. The data is loaded and prepared for the UI here. The ViewModel class is
  * lifecycle aware, as well as persistent to config changes of fragments and activities.
  */
-class WikiExtractsViewModel(val wikiRepo: WikiExtractRepository) : ViewModel() {
+class WikiExtractsViewModel : ViewModel() {
 
-    // Mutable LiveData holds the app data in a lifecycle conscious manner.
-    lateinit var extracts: LiveData<WikiExtract>
+    // LiveData holds the app data in a lifecycle conscious manner.
+    lateinit var extracts: LiveData<MutableList<WikiExtract>>
+
+    // Instance of the wiki repo to grab the function that launches the retrofit async.
+    private val wikiRepo: WikiExtractRepository = WikiExtractRepository()
 
     /**
      * Private method handling the async load to expose data to the public getter function.
      */
-    fun loadExtracts() {
-        // Handle an async for the Wiki Extracts here.
-        // Test array
-        val extract1 = WikiExtract(0,
-                "J.R.R. Tolkien", "Tolkien was a cool guy who knew how to write.")
-        val extract2 = WikiExtract(1,
-                "Bath", "Bath is a pretty city and you better be there.")
-        val extract3 = WikiExtract(2,
-                "Money", "I have no money right now.")
-        // Set LiveData value to the test array.
-        extracts = wikiRepo.getExtracts("Google")
+    fun loadExtracts(titles: String) {
+        // Handle an async for the Wiki Extracts here. Set the data returned to our LiveData object.
+        extracts = wikiRepo.getExtracts(titles)
     }
 }

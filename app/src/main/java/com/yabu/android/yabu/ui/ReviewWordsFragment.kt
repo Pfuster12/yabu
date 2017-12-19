@@ -29,6 +29,9 @@ class ReviewWordsFragment : Fragment() {
         return rootView
     }
 
+    /**
+     * Helper function to set toolbar to the Review Words title.
+     */
     private fun setToolbarTitle(rootView: View) {
         // Grab the title of the toolbar.
         val toolbarTitle: TextView = rootView
