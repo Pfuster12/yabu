@@ -5,7 +5,9 @@
     <!-- App bar height in every screen, showing titles -->
     <dimen name="app_bar_height">46dp</dimen>
     <!-- Margin between titles in Start-Up screen -->
-    <dimen name="start_up_margin_top">32dp</dimen>
+    <dimen name="start_up_titles_margin_top">32dp</dimen>
     <!-- End Margin between astronaut logo -->
-    <dimen name="image_end_margin">120dp</dimen>
+    <dimen name="start_up_image_end_margin">120dp</dimen>
+    <!-- End Margin between astronaut logo -->
+    <dimen name="list_item_vertical_margin">16dp</dimen>
 </resources>

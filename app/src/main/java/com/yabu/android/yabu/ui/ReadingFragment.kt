@@ -2,6 +2,7 @@ package com.yabu.android.yabu.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -9,6 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.ListPreloader
+import com.bumptech.glide.RequestBuilder
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.yabu.android.yabu.R
 import viewmodel.WikiExtractsViewModel
 import kotlinx.android.synthetic.main.fragment_reading.view.*
@@ -62,7 +69,9 @@ class ReadingFragment : Fragment() {
         // Set the layout manager.
         rootView.reading_recycler_view.layoutManager = mLinearLayoutManager
         // init an empty list
-        mWikiExtracts = mutableListOf(WikiExtract(1, "bab", "bub"))
+        mWikiExtracts = mutableListOf()
+        // Add on scroll listener for glide integration to preload images before scrolling.
+        rootView.reading_recycler_view.addOnScrollListener(prepareGlideRecyclerViewIntegration())
         // Set the adapter for the recycler view with the empty list.
         mAdapter = RecyclerViewAdapter(mWikiExtracts, this@ReadingFragment.context)
         rootView.reading_recycler_view.adapter = mAdapter
@@ -85,19 +94,29 @@ class ReadingFragment : Fragment() {
         val observer: Observer<MutableList<WikiExtract>> = Observer { wikiExtracts ->
             // Check for null since addAll() accepts only non null
             if (wikiExtracts != null) {
+                mWikiExtracts.clear()
                 // Add the received wikiExtract list to the list hooked in the adapter.
                 //mWikiExtracts.addAll(wikiExtracts)
                 mWikiExtracts.addAll(wikiExtracts)
                 mAdapter.notifyDataSetChanged()
             }
-            //test_text_reading.text = wikiExtracts?.get(0)?.textExtract
         }
 
         // Load the test arrays and set the LiveData value.
-        mModel.loadExtracts("Cheese")
+        mModel.loadExtracts("Google|Robot|Android_(operating_system)")
 
         // Observe the LiveData, passing in the fragment as the LifecycleOwner and the observer.
         mModel.extracts.observe(this@ReadingFragment, observer)
+    }
+
+    private fun prepareGlideRecyclerViewIntegration(): RecyclerViewPreloader<String> {
+        val sizeProvider: ListPreloader.PreloadSizeProvider<String> = ViewPreloadSizeProvider<String>()
+        val modelProvider: ListPreloader.PreloadModelProvider<String> =
+                MyPreloadModelProvider(mWikiExtracts, this@ReadingFragment.context)
+        return RecyclerViewPreloader(Glide.with(this@ReadingFragment),
+                        modelProvider,
+                        sizeProvider,
+                        4)
     }
 
     /**
@@ -109,5 +128,38 @@ class ReadingFragment : Fragment() {
                 .layout_toolbar.findViewById(R.id.toolbar_title)
         // Set the title of the toolbar to the Reading tab.
         toolbarTitle.text = getString(R.string.reading_page_title)
+    }
+
+    /**
+     * Preload Model provider for the Glide integration with Recycler View. The class receives
+     * preload urls (models) to load when the user scrolls so the images are preloaded.
+     */
+    private class MyPreloadModelProvider(val wikiExtracts: MutableList<WikiExtract>, val context: Context)
+        : ListPreloader.PreloadModelProvider<String> {
+
+        /**
+         * Gets the preload items from the urls
+         */
+        override fun getPreloadItems(position: Int): MutableList<String> {
+            // Get the current extract. Position minus 1 since there is a header
+            while (position < wikiExtracts.size) {
+                val extract = wikiExtracts[position]
+                // Grab the thumbnail url of the current extract.
+                val url = extract.thumbnail
+                return if (url!!.isBlank()) mutableListOf() else mutableListOf(url)
+            }
+            return mutableListOf()
+        }
+
+        /**
+         * Returns a request builder that preload views will use to fill with image.
+         */
+        override fun getPreloadRequestBuilder(item: String?): RequestBuilder<*> {
+            return GlideApp.with(context)
+                    .load(item)
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_astronaut_flying)
+                    .transition(withCrossFade())
+        }
     }
 }

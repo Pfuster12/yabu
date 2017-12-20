@@ -20,7 +20,7 @@
     <ImageView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginEnd="@dimen/image_end_margin"
+        android:layout_marginEnd="@dimen/start_up_image_end_margin"
         android:src="@drawable/ic_astronaut_flying"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start_up_description"
-        android:layout_marginTop="@dimen/start_up_margin_top"
+        android:layout_marginTop="@dimen/start_up_titles_margin_top"
         app:layout_constraintTop_toBottomOf="@id/start_up_logo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -43,7 +43,7 @@
         android:id="@+id/start_up_sign_up_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/start_up_margin_top"
+        android:layout_marginTop="@dimen/start_up_titles_margin_top"
         app:layout_constraintTop_toBottomOf="@id/start_up_description"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,7 +72,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start_up_continue_no_sign"
-        android:layout_marginTop="@dimen/start_up_margin_top"
+        android:layout_marginTop="@dimen/start_up_titles_margin_top"
         app:layout_constraintTop_toBottomOf="@id/start_up_sign_up_group"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

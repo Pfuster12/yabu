@@ -36,7 +36,18 @@ interface WikiAPIService {
      *
      * The query parameter 'titles' are added in a {Title1}|{Title2}|...etc. format.
      */
-
-    @GET("w/api.php?action=query&prop=extracts&explaintext=1&exintro=1&indexpageids&format=json")
+    @GET("w/api.php?action=query" +
+            // Retrieve extracts and thumbnail image associated with article
+            "&prop=extracts|pageimages" +
+            // Return extract in plain text (Boolean)
+            "&explaintext=1" +
+            // Return only the intro section (Boolean)
+            "&exintro=1" +
+            // Return the page ids as a list
+            "&indexpageids" +
+            // The max width of the thumbnail. As a list thumbnail 360 px will be enough (360dp)
+            "&pithumbsize=360" +
+            // Return in a JSON format.
+            "&format=json")
     fun requestExtracts(@Query("titles") titles: String): Call<String>
 }

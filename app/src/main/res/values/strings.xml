@@ -10,4 +10,8 @@
     <string name="reading_page_title">Reading</string>
     <string name="review_words_page_title">Review Words</string>
     <string name="your_stats_page_title">Your Stats</string>
+    <!-- Powered by text -->
+    <string name="powered_by">Powered by open-source awesomeness</string>
+    <!-- Content description for list_item_thumbnail -->
+    <string name="thumbnail_content_description">Extract thumbnail</string>
 </resources>

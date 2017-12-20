@@ -5,6 +5,6 @@ package pojos
  * text into an object.
  */
 data class WikiExtract constructor(val pageId: Int?,
-                              val titleExtract: String?,
-                              val textExtract: String?) {
-}// Parameters of the json result to hold data.
+                                   val titleExtract: String?,
+                                   val textExtract: String?,
+                                   val thumbnail: String?) // Parameters of the json result to hold data.

@@ -57,8 +57,12 @@ class JsonUtils {
             val pageid = page.optInt("pageid")
             val title = page.optString("title")
             val extract = page.optString("extract")
+            // Grab the thumbnail json object
+            val thumbnailjson = page.optJSONObject("thumbnail")
+            // Grab the source url of the thumbnail
+            val thumbnail = thumbnailjson.optString("source")
             // Create a new wikiExtract pojo
-            val wikiExtract = WikiExtract(pageid, title, extract)
+            val wikiExtract = WikiExtract(pageid, title, extract, thumbnail)
             wikiExtracts.add(wikiExtract)
             i++
         }

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.yabu.android.yabu.R
 import pojos.WikiExtract
 
@@ -58,11 +59,23 @@ class RecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtract>, pr
             headerType -> {} // Do bind operations here
             // If item type then bind texts and images with wikiExtracts pojo
             itemType -> {
+                // Cast the holder to a reading item
                 val itemViewHolder: ReadingItemViewHolder? = holder as? ReadingItemViewHolder
-                val currentPosition = position
-                val currentExtract: WikiExtract = wikiExtracts[0]
+                // Position is minus 1 because of the header
+                val currentPosition = position - 1
+                // Extract current extract
+                val currentExtract: WikiExtract = wikiExtracts[currentPosition]
+                // Set title.
                 itemViewHolder?.title?.text = currentExtract.titleExtract
+                // Set text
                 itemViewHolder?.extract?.text = currentExtract.textExtract
+                // Set thumbnail with Glide.
+                GlideApp.with(context)
+                        .load(currentExtract.thumbnail)
+                        .transition(withCrossFade())
+                        .placeholder(R.drawable.ic_astronaut_flying)
+                        .centerCrop()
+                        .into(itemViewHolder?.thumbnail)
             }
             // If footer type bind footer texts and vectors.
             footerType -> {}// Do bind operations here
@@ -81,11 +94,11 @@ class RecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtract>, pr
         // Return in a when loop.
         return when (position) {
             // If its the first item it must be the header.
-            0 -> itemType
+            0 -> headerType
             // If its within range of 1 or the array size it must be an item.
             in 1..wikiExtracts.size -> itemType
             // If its above the list size it must be the footer.
-            wikiExtracts.size -> footerType
+            wikiExtracts.size + 1 -> footerType
             else -> itemType
         }
     }
