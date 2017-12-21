@@ -3,6 +3,9 @@ package com.yabu.android.yabu.ui
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -20,6 +23,8 @@ import com.yabu.android.yabu.R
 import jsondataclasses.WikiExtract
 import viewmodel.WikiExtractsViewModel
 import kotlinx.android.synthetic.main.fragment_reading.view.*
+import kotlinx.android.synthetic.main.reading_list_item.view.*
+import org.parceler.Parcels
 
 /**
  * Reading list fragment, to be paired with ViewPager for tab slide animations in Main Activity.
@@ -72,8 +77,16 @@ class ReadingFragment : Fragment() {
         mWikiExtracts = mutableListOf()
         // Add on scroll listener for glide integration to preload images before scrolling.
         rootView.reading_recycler_view.addOnScrollListener(prepareGlideRecyclerViewIntegration())
-        // Set the adapter for the recycler view with the empty list.
-        mAdapter = RecyclerViewAdapter(mWikiExtracts, this@ReadingFragment.context)
+        // Set the adapter for the recycler view with the empty list, and declare the listener
+        // function.
+        mAdapter = RecyclerViewAdapter(mWikiExtracts,
+                this@ReadingFragment.context, listener = { extract ->
+            // set the function with the clicked extract parameter to start an activity.
+            val intent = Intent(this@ReadingFragment.context, DetailActivity::class.java)
+            // Put the extract as a parcelable extra.
+            intent.putExtra(BundleKeys.WIKI_EXTRACTS_BUNDLE, Parcels.wrap(extract))
+            startActivity(intent)
+        })
         rootView.reading_recycler_view.adapter = mAdapter
 
         // Return the inflated view to complete the onCreate process.
@@ -150,7 +163,9 @@ class ReadingFragment : Fragment() {
          */
         override fun getPreloadItems(position: Int): MutableList<String> {
             // Get the current extract.
-            while (position < wikiExtracts.size) {
+            val currentExtract = position + 1
+            // Check if position is within the extract positions.
+            if (currentExtract < wikiExtracts.size + 1) {
                 val extract = wikiExtracts[position]
                 // Grab the thumbnail url of the current extract.
                 val url = extract.thumbnail?.source
@@ -158,6 +173,7 @@ class ReadingFragment : Fragment() {
                     return if (url.isBlank()) mutableListOf() else mutableListOf(url)
                 }
             }
+            // Return an empty list if not an extract.
             return mutableListOf()
         }
 

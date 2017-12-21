@@ -5,7 +5,7 @@
     android:id="@+id/toolbar"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/app_bar_height"
+    android:layout_height="@dimen/toolbar_height"
     style="@style/ToolbarTheme"
     tools:showIn="@layout/activity_main">
 

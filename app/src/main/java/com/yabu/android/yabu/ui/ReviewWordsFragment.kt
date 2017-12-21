@@ -24,7 +24,9 @@ class ReviewWordsFragment : Fragment() {
         // Grab the root view inflated for the fragment.
         val rootView: View = inflater!!
                 .inflate(R.layout.fragment_review_words, container, false)
+
         setToolbarTitle(rootView)
+
         // Return the inflated view to complete the onCreate process.
         return rootView
     }

@@ -48,23 +48,23 @@ class WikiExtractRepository {
                                     response: Response<WikiTitlesJSONResponse>?) {
                 // Grab the json response
                 val jsonResponse = response?.body()
+                // init the title string empty
                 var buildTitleQuery = ""
                 if (jsonResponse != null) {
+                    // Grab the container with the links of titles
                     val titles: List<WikiTitles> = jsonResponse.query.pages[0].links
-                    // init the string to contain all the titles with the first one
-                    buildTitleQuery = titles[0].title!!
-                    // Construct the title string with the rest. Start while loop to iterate
-                    // through them.
-                    var i = 1
-                    while (i < 3) {
+                    // Construct the title string with a chosen start and step.
+                    val start = 6
+                    for (i in start until WikiAPIService.titleLimits step 2) {
                         val currentTitle = titles[i].title
-                        // Add the next title string.
-                        buildTitleQuery = buildTitleQuery.plus("|" + currentTitle)
+                        // build the title string by adding '...|{Title}'
+                        buildTitleQuery =
+                                if (i == start) buildTitleQuery.plus(currentTitle)
+                                else buildTitleQuery.plus("|" + currentTitle)
                         log?.warning(buildTitleQuery)
-                        i++
                     }
-                    // With the query titles ready, send the call to get the extracts
                 }
+                // With the query titles built, send the call to get the extracts
                 getExtracts(buildTitleQuery)
             }
 

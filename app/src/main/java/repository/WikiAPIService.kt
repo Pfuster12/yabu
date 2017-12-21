@@ -21,6 +21,8 @@ interface WikiAPIService {
         // API endpoint address for Wiki API
         private val endpoint: String = "https://en.wikipedia.org"
 
+        const val titleLimits = 26
+
         fun create(): WikiAPIService {
             // The Retrofit class generates an implementation of the WikiAPIService interface.
             val retrofit: Retrofit = Retrofit.Builder()
@@ -61,11 +63,17 @@ interface WikiAPIService {
      * function that will bring the extracts of these titles.
      */
     @GET("w/api.php?action=query" +
+            // Retrieve title links
             "&prop=links" +
+            // Retrieve links in the main page
             "&titles=Main_Page" +
+            // Only return articles (Not users or meta pages)
             "&plnamespace=0" +
-            "&pllimit=10" +
+            // Return a limit number defined in companion object
+            "&pllimit=" + titleLimits +
+            // Return in json format
             "&format=json" +
+            // Return new json format
             "&formatversion=2")
     fun requestDailyTitles(): Call<WikiTitlesJSONResponse>
 }
