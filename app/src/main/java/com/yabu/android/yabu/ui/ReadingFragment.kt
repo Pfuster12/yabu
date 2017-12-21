@@ -17,9 +17,9 @@ import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.yabu.android.yabu.R
+import jsondataclasses.WikiExtract
 import viewmodel.WikiExtractsViewModel
 import kotlinx.android.synthetic.main.fragment_reading.view.*
-import pojos.WikiExtract
 
 /**
  * Reading list fragment, to be paired with ViewPager for tab slide animations in Main Activity.
@@ -102,17 +102,25 @@ class ReadingFragment : Fragment() {
             }
         }
 
-        // Load the test arrays and set the LiveData value.
-        mModel.loadExtracts("Google|Robot|Android_(operating_system)")
+        // Load the daily extracts from the main wiki page
+        // through a retrofit call and set the LiveData value.
+        mModel.loadExtracts()
 
-        // Observe the LiveData, passing in the fragment as the LifecycleOwner and the observer.
+        // Observe the LiveData in the view model which will be set to the extracts,
+        // passing in the fragment as the LifecycleOwner and the observer created above.
         mModel.extracts.observe(this@ReadingFragment, observer)
     }
 
+    /**
+     * Helper function to set up Glide's recycler view pre load image integration
+     */
     private fun prepareGlideRecyclerViewIntegration(): RecyclerViewPreloader<String> {
+        // Create a size provider which tells it its a set view to load
         val sizeProvider: ListPreloader.PreloadSizeProvider<String> = ViewPreloadSizeProvider<String>()
+        // init a model provider to implement functions getting preload items
         val modelProvider: ListPreloader.PreloadModelProvider<String> =
                 MyPreloadModelProvider(mWikiExtracts, this@ReadingFragment.context)
+        // Return a preloader object.
         return RecyclerViewPreloader(Glide.with(this@ReadingFragment),
                         modelProvider,
                         sizeProvider,
@@ -141,12 +149,14 @@ class ReadingFragment : Fragment() {
          * Gets the preload items from the urls
          */
         override fun getPreloadItems(position: Int): MutableList<String> {
-            // Get the current extract. Position minus 1 since there is a header
+            // Get the current extract.
             while (position < wikiExtracts.size) {
                 val extract = wikiExtracts[position]
                 // Grab the thumbnail url of the current extract.
-                val url = extract.thumbnail
-                return if (url!!.isBlank()) mutableListOf() else mutableListOf(url)
+                val url = extract.thumbnail?.source
+                if (url != null) {
+                    return if (url.isBlank()) mutableListOf() else mutableListOf(url)
+                }
             }
             return mutableListOf()
         }
@@ -157,8 +167,9 @@ class ReadingFragment : Fragment() {
         override fun getPreloadRequestBuilder(item: String?): RequestBuilder<*> {
             return GlideApp.with(context)
                     .load(item)
+                    .placeholder(R.color.color500Grey)
                     .centerCrop()
-                    .placeholder(R.drawable.ic_astronaut_flying)
+                    .error(R.drawable.ic_astronaut_flying)
                     .transition(withCrossFade())
         }
     }

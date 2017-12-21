@@ -2,7 +2,7 @@ package viewmodel
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
-import pojos.WikiExtract
+import jsondataclasses.WikiExtract
 import repository.WikiExtractRepository
 
 /**
@@ -21,8 +21,8 @@ class WikiExtractsViewModel : ViewModel() {
     /**
      * Private method handling the async load to expose data to the public getter function.
      */
-    fun loadExtracts(titles: String) {
+    fun loadExtracts() {
         // Handle an async for the Wiki Extracts here. Set the data returned to our LiveData object.
-        extracts = wikiRepo.getExtracts(titles)
+        extracts = wikiRepo.getDailyExtracts()
     }
 }

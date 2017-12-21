@@ -1,8 +1,10 @@
 package repository
 
+import jsondataclasses.WikiExtractsJSONResponse
+import jsondataclasses.WikiTitlesJSONResponse
 import retrofit2.Call
 import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -23,7 +25,7 @@ interface WikiAPIService {
             // The Retrofit class generates an implementation of the WikiAPIService interface.
             val retrofit: Retrofit = Retrofit.Builder()
                     .baseUrl(endpoint)
-                    .addConverterFactory(ScalarsConverterFactory.create())
+                    .addConverterFactory(MoshiConverterFactory.create())
                     .build()
             return retrofit.create(WikiAPIService::class.java)
         }
@@ -48,6 +50,22 @@ interface WikiAPIService {
             // The max width of the thumbnail. As a list thumbnail 360 px will be enough (360dp)
             "&pithumbsize=360" +
             // Return in a JSON format.
-            "&format=json")
-    fun requestExtracts(@Query("titles") titles: String): Call<String>
+            "&format=json" +
+            // Return new json format with proper page array.
+            "&formatversion=2")
+    fun requestExtracts(@Query("titles") titles: String): Call<WikiExtractsJSONResponse>
+
+    /**
+     * GET HTTP function to return a number of featured Wikipedia link titles. These
+     * link titles will be chosen at random to then be inserted into the requestExtracts()
+     * function that will bring the extracts of these titles.
+     */
+    @GET("w/api.php?action=query" +
+            "&prop=links" +
+            "&titles=Main_Page" +
+            "&plnamespace=0" +
+            "&pllimit=10" +
+            "&format=json" +
+            "&formatversion=2")
+    fun requestDailyTitles(): Call<WikiTitlesJSONResponse>
 }

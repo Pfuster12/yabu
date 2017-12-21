@@ -1,10 +1,5 @@
 package repository
 
-import android.net.Uri
-import org.json.JSONObject
-import pojos.WikiExtract
-import java.net.URL
-
 /**
  * Utility class to handle endpoint calls with JsonUtils API. The API docs can be found at
  * https://www.mediawiki.org/wiki/API:Main_page.
@@ -29,12 +24,12 @@ class JsonUtils {
         }
     }
 
-    /**
+ /*   *//**
      * Utility function to parse the json string returned by a http call of the wiki endpoint.
      * The json must be manually parsed because the wiki api is formatted as json objects of
      * each page id, which are different for each article. Therefore it can't be deserialized
      * into pojos as they don't have the same key for each call.
-     */
+     *//*
     fun parseJson(jsonString: String?): MutableList<WikiExtract> {
         // Top-level wikiExtract mutable list to be added to in parsing
         val wikiExtracts: MutableList<WikiExtract> = mutableListOf()
@@ -68,5 +63,5 @@ class JsonUtils {
         }
         // Return the mutable list with added extracts.
         return wikiExtracts
-    }
+    }*/
 }

@@ -9,7 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.yabu.android.yabu.R
-import pojos.WikiExtract
+import jsondataclasses.WikiExtract
 
 /**
  * Recycler View custom adapter with a header, footer and item view holder.
@@ -66,14 +66,15 @@ class RecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtract>, pr
                 // Extract current extract
                 val currentExtract: WikiExtract = wikiExtracts[currentPosition]
                 // Set title.
-                itemViewHolder?.title?.text = currentExtract.titleExtract
+                itemViewHolder?.title?.text = currentExtract.title
                 // Set text
-                itemViewHolder?.extract?.text = currentExtract.textExtract
+                itemViewHolder?.extract?.text = currentExtract.extract
                 // Set thumbnail with Glide.
                 GlideApp.with(context)
-                        .load(currentExtract.thumbnail)
+                        .load(currentExtract.thumbnail?.source)
                         .transition(withCrossFade())
-                        .placeholder(R.drawable.ic_astronaut_flying)
+                        .placeholder(R.color.color500Grey)
+                        .error(R.drawable.ic_astronaut_flying)
                         .centerCrop()
                         .into(itemViewHolder?.thumbnail)
             }

@@ -23,8 +23,8 @@
             android:contentDescription="@string/thumbnail_content_description"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_astronaut_flying"/>
+            android:scaleType="center"
+            tools:src="@mipmap/ic_launcher" />
     </android.support.v7.widget.CardView>
 
     <TextView
