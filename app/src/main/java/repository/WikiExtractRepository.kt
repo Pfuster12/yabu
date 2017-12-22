@@ -7,6 +7,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.logging.Logger
+import kotlin.math.roundToInt
 
 /**
  * Repository class responsible for handling data operations. Mediates between different
@@ -39,6 +40,7 @@ class WikiExtractRepository {
         val titlesCall: Call<WikiTitlesJSONResponse> = apiService.requestDailyTitles()
         // Enqueue a call to async
         titlesCall.enqueue(object : Callback<WikiTitlesJSONResponse> {
+
             /**
              * Override function for onResponse callback of our http request. onResponse returns a
              * Response object from okHTTP in String format through the Scalar converter passed in
@@ -46,26 +48,10 @@ class WikiExtractRepository {
              */
             override fun onResponse(call: Call<WikiTitlesJSONResponse>,
                                     response: Response<WikiTitlesJSONResponse>?) {
-                // Grab the json response
-                val jsonResponse = response?.body()
-                // init the title string empty
-                var buildTitleQuery = ""
-                if (jsonResponse != null) {
-                    // Grab the container with the links of titles
-                    val titles: List<WikiTitles> = jsonResponse.query.pages[0].links
-                    // Construct the title string with a chosen start and step.
-                    val start = 6
-                    for (i in start until WikiAPIService.titleLimits step 2) {
-                        val currentTitle = titles[i].title
-                        // build the title string by adding '...|{Title}'
-                        buildTitleQuery =
-                                if (i == start) buildTitleQuery.plus(currentTitle)
-                                else buildTitleQuery.plus("|" + currentTitle)
-                        log?.warning(buildTitleQuery)
-                    }
-                }
+                // Build the titles query.
+                val titleQuery = buildTitlesQuery(response?.body())
                 // With the query titles built, send the call to get the extracts
-                getExtracts(buildTitleQuery)
+                getExtracts(titleQuery)
             }
 
             /**
@@ -89,6 +75,7 @@ class WikiExtractRepository {
         // Callback implementation
         // Enqueue a call to an async.
         extractsCall.enqueue(object : Callback<WikiExtractsJSONResponse> {
+
             /**
              * Override function for onResponse callback of our http request. onResponse returns a
              * Response object from okHTTP in String format through the Scalar converter passed in
@@ -109,5 +96,71 @@ class WikiExtractRepository {
                 log?.warning("Extracts Http request failed")
             }
         })
+    }
+
+    /**
+     * Helper fun to filter list out from number titles and Wikipedia meta pages.
+     */
+    private fun filterExtractList(titlesArg: List<WikiTitles>): List<WikiTitles> {
+        // Set to a var
+        var titles = titlesArg
+
+        // Check if there are titles since safe null boolean is not allowed for
+        // filter() predicate.
+        if (titles.any()) {
+
+            // Loop to filter every title starting with a number
+            for (i in 0..9) {
+                // Filter list to take out any extracts starting with a number
+                titles = titles.filterNot {
+                    it -> it.title!!.startsWith(i.toString(), true) }
+            }
+
+            // Filter to take out any extracts starting with an english character
+            titles = titles.filterNot {
+                it -> it.title!!.startsWith("w", true) }
+
+            // Logger to check titles
+            for (title in titles) {
+                log?.warning("${ title.title }")
+            }
+        }
+
+        // Return list
+        return titles
+    }
+
+    /**
+     * Helper fun to build the title query string
+     */
+    private fun buildTitlesQuery(jsonResponse: WikiTitlesJSONResponse?): String {
+        // init the title string empty.
+        var buildTitleQuery = ""
+        if (jsonResponse != null) {
+            // Grab the container with the links of titles.
+            var titles: List<WikiTitles> = jsonResponse.query.pages[0].links
+            // Filter the list to contain only proper titles.
+            titles = filterExtractList(titles)
+
+            // init a starting index.
+            val start = 10
+            // math op to find the range to get ~10 items, no matter the size of
+            //  the list. Decimal results are rounded to the nearest int.
+            val range: Int = (titles.size - start).div(10).toDouble().roundToInt()
+
+            // Construct the title string with a chosen start and step.
+            for (i in start until titles.size step range) {
+                // Grab the current title.
+                val currentTitle = titles[i].title
+                // build the title string by adding '...|{Title}'
+                buildTitleQuery =
+                        if (i == start) buildTitleQuery.plus(currentTitle)
+                        else buildTitleQuery.plus("|" + currentTitle)
+                log?.warning(buildTitleQuery)
+            }
+        }
+
+        // Return the query string
+        return buildTitleQuery
     }
 }

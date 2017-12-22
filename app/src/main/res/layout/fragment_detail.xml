@@ -7,29 +7,33 @@
     <!-- Your Scrollable View -->
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/detail_title"
                 android:layout_margin="16dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 tools:text="Testing Details Fragment"
-                style="@style/TextAppearance.AppCompat.Title"/>
+                style="@style/TextAppearance.AppCompat.Headline"/>
 
             <TextView
                 android:id="@+id/detail_extract"
                 android:layout_marginStart="16dp"
+                android:paddingBottom="64dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 tools:text="Testing Details Fragment"
-                style="@style/TextAppearance.AppCompat.Caption"/>
+                style="@style/TextAppearance.AppCompat.Body1"/>
+
+            <include
+                layout="@layout/footer_powered" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
@@ -45,6 +49,7 @@
             app:titleEnabled="false">
 
             <ImageView
+                android:id="@+id/detail_thumbnail"
                 android:contentDescription="@string/thumbnail_content_description"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

@@ -19,10 +19,12 @@ interface WikiAPIService {
      */
     companion object {
         // API endpoint address for Wiki API
-        private val endpoint: String = "https://en.wikipedia.org"
+        private val endpoint: String = "https://ja.wikipedia.org"
 
-        const val titleLimits = 26
+        // Set a constant of links limits.
+        const val titleLimits = 200
 
+        // companion create() fun for api service
         fun create(): WikiAPIService {
             // The Retrofit class generates an implementation of the WikiAPIService interface.
             val retrofit: Retrofit = Retrofit.Builder()
@@ -66,7 +68,7 @@ interface WikiAPIService {
             // Retrieve title links
             "&prop=links" +
             // Retrieve links in the main page
-            "&titles=Main_Page" +
+            "&titles=メインページ" +
             // Only return articles (Not users or meta pages)
             "&plnamespace=0" +
             // Return a limit number defined in companion object

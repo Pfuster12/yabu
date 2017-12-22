@@ -5,7 +5,7 @@
     <!-- App bar height in every screen, showing titles -->
     <dimen name="toolbar_height">46dp</dimen>
     <!-- Collapsing app bar height in detail screen -->
-    <dimen name="collapsing_app_bar_height">192dp</dimen>
+    <dimen name="collapsing_app_bar_height">260dp</dimen>
     <!-- Margin between titles in Start-Up screen -->
     <dimen name="start_up_titles_margin_top">32dp</dimen>
     <!-- End Margin between astronaut logo -->
