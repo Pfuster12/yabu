@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Yabu</string>
+    <string name="app_name" translatable="false">Yabu</string>
     <!-- Start up description -->
     <string name="start_up_description">Read Japanese text, open-source.</string>
     <!-- Start up Sign Up -->
@@ -12,6 +12,8 @@
     <string name="your_stats_page_title">Your Stats</string>
     <!-- Powered by text -->
     <string name="powered_by">Powered by open-source awesomeness</string>
+    <!-- Powered by text -->
+    <string name="powered_by_ja" translatable="false">素晴らしい~オープン・ソースで動く</string>
     <!-- Content description for list_item_thumbnail -->
     <string name="thumbnail_content_description">Extract thumbnail</string>
 </resources>

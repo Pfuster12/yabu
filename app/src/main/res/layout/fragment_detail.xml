@@ -4,42 +4,10 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Your Scrollable View -->
-    <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/detail_title"
-                android:layout_margin="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="Testing Details Fragment"
-                style="@style/TextAppearance.AppCompat.Headline"/>
-
-            <TextView
-                android:id="@+id/detail_extract"
-                android:layout_marginStart="16dp"
-                android:paddingBottom="64dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="Testing Details Fragment"
-                style="@style/TextAppearance.AppCompat.Body1"/>
-
-            <include
-                layout="@layout/footer_powered" />
-        </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
-
     <android.support.design.widget.AppBarLayout
         android:layout_height="@dimen/collapsing_app_bar_height"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -48,12 +16,13 @@
             app:contentScrim="@color/colorPrimary"
             app:titleEnabled="false">
 
-            <ImageView
+            <com.yabu.android.yabu.ui.TopCropImageView
                 android:id="@+id/detail_thumbnail"
+                android:fitsSystemWindows="true"
                 android:contentDescription="@string/thumbnail_content_description"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_astronaut_flying"
+                tools:src="@drawable/ground_astronautmhdpi"
                 app:layout_collapseMode="parallax"/>
 
             <!-- App-wide toolbar layout displayed at the top of screens. -->
@@ -75,4 +44,51 @@
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <TextView
+                android:id="@+id/detail_title"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Testing Details Fragment"
+                style="@style/ExtractTitleStyleDetail" />
+
+            <TextView
+                android:id="@+id/detail_extract"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:paddingBottom="32dp"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                tools:text="Testing Details Fragment"
+                style="@style/ExtractTextStyleDetail" />
+
+            <!-- this sits at the bottom of the ScrollView,
+            getting pushed out of view if the ScrollView's
+            content is tall enough -->
+            <ImageView
+                android:contentDescription="@string/thumbnail_content_description"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:src="@drawable/ground_astronautmhdpi"/>
+
+            <include
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                layout="@layout/footer_powered" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

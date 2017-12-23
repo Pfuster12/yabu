@@ -8,9 +8,12 @@
     <ImageView
         android:id="@+id/footer_graphic"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:src="@color/colorPrimary"/>
+        android:layout_height="160dp"
+        android:src="@drawable/ground_astronautmhdpi"/>
 
     <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         layout="@layout/footer_powered" />
 </LinearLayout>

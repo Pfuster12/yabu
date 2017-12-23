@@ -21,7 +21,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="@dimen/start_up_image_end_margin"
-        android:src="@drawable/ic_astronaut_flying"
+        android:src="@drawable/ic_flying_astronaut_solid"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

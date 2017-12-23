@@ -34,6 +34,7 @@
     <!-- Start Up No sign in continue text -->
     <style name="StartUpDescriptionTextStyle">
         <item name="android:textSize">18sp</item>
+        <item name="android:letterSpacing">0.05</item>
         <item name="android:textColor">@color/color100Grey</item>
         <item name="android:fontFamily">@font/caveatbrush_regular</item>
     </style>
@@ -42,5 +43,38 @@
     <style name="StartUpContinueTextStyle">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/color700Grey</item>
+    </style>
+
+    <!--Extract title style in detail view-->
+    <style name="ExtractTitleStyleDetail" parent="Base.TextAppearance.AppCompat.Headline">
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textColor">@color/color100Grey</item>
+    </style>
+
+    <!--Extract title style in detail view-->
+    <style name="ExtractTitleStyleListItem" parent="Base.TextAppearance.AppCompat.Headline">
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textColor">@color/color100Grey</item>
+        <item name="android:lineSpacingMultiplier">2</item>
+    </style>
+
+    <!--Extract text style in detail view-->
+    <style name="ExtractTextStyleDetail" parent="Base.TextAppearance.AppCompat.Medium">
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textColor">@color/color300Grey</item>
+        <item name="android:lineSpacingMultiplier">2</item>
+    </style>
+
+    <!--Extract text style in detail view-->
+    <style name="ExtractTextStyleListItem" parent="Base.TextAppearance.AppCompat.Caption">
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textColor">@color/color300Grey</item>
+        <item name="android:lineSpacingMultiplier">2</item>
+    </style>
+
+    <!--Powered by japanese text-->
+    <style name="PoweredJaStyle" parent="Base.TextAppearance.AppCompat.Caption">
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textColor">@color/color500Grey</item>
     </style>
 </resources>

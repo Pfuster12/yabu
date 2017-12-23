@@ -3,28 +3,133 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:translationX="4dp"
-    android:layout_marginTop="@dimen/list_item_vertical_margin"
-    android:paddingBottom="@dimen/list_item_vertical_margin">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <View
+        android:id="@+id/grey_700_circle_u5"
+        android:layout_width="4dp"
+        android:layout_height="4dp"
+        android:background="@drawable/grey_700_circle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_700_circle_u4"
+        android:layout_width="4dp"
+        android:layout_height="4dp"
+        android:background="@drawable/grey_700_circle"
+        app:layout_constraintTop_toBottomOf="@id/grey_700_circle_u5"
+        app:layout_constraintBottom_toTopOf="@id/grey_700_circle_u3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_700_circle_u3"
+        android:layout_width="4dp"
+        android:layout_height="4dp"
+        android:background="@drawable/grey_700_circle"
+        app:layout_constraintTop_toBottomOf="@id/grey_700_circle_u4"
+        app:layout_constraintBottom_toTopOf="@id/grey_700_circle_u2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_700_circle_u2"
+        android:layout_width="4dp"
+        android:layout_height="4dp"
+        android:background="@drawable/grey_700_circle"
+        app:layout_constraintTop_toBottomOf="@id/grey_700_circle_u3"
+        app:layout_constraintBottom_toTopOf="@id/grey_700_circle_u1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_700_circle_u1"
+        android:layout_width="4dp"
+        android:layout_height="4dp"
+        android:background="@drawable/grey_700_circle"
+        app:layout_constraintTop_toBottomOf="@id/grey_700_circle_u2"
+        app:layout_constraintBottom_toTopOf="@id/grey_500_circle_u"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_500_circle_u"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:background="@drawable/grey_500_circle"
+        app:layout_constraintTop_toBottomOf="@id/grey_700_circle_u1"
+        app:layout_constraintBottom_toTopOf="@id/grey_300_circle_u"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_300_circle_u"
+        android:layout_width="7dp"
+        android:layout_height="7dp"
+        android:background="@drawable/grey_300_circle"
+        app:layout_constraintTop_toBottomOf="@id/grey_500_circle_u"
+        app:layout_constraintBottom_toTopOf="@+id/grey_100_circle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_100_circle"
+        android:layout_width="9dp"
+        android:layout_height="9dp"
+        android:background="@drawable/grey_100_circle"
+        app:layout_constraintTop_toTopOf="@id/list_item_title"
+        app:layout_constraintBottom_toBottomOf="@id/list_item_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_300_circle"
+        android:layout_width="7dp"
+        android:layout_height="7dp"
+        android:background="@drawable/grey_300_circle"
+        app:layout_constraintTop_toBottomOf="@id/grey_100_circle"
+        app:layout_constraintBottom_toTopOf="@+id/grey_500_circle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_500_circle"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:background="@drawable/grey_500_circle"
+        app:layout_constraintTop_toBottomOf="@id/grey_300_circle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_700_circle_d1"
+        android:layout_width="4dp"
+        android:layout_height="4dp"
+        android:background="@drawable/grey_700_circle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardview"
         android:layout_width="0dp"
         android:layout_height="144dp"
         android:layout_marginStart="42dp"
+        android:layout_marginTop="@dimen/list_item_vertical_margin"
         app:cardCornerRadius="4dp"
+        android:translationX="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <ImageView
+        <com.yabu.android.yabu.ui.TopCropImageView
             android:id="@+id/list_item_thumbnail"
-            android:contentDescription="@string/thumbnail_content_description"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="center"
-            tools:src="@mipmap/ic_launcher" />
+            tools:src="@mipmap/ic_launcher"/>
     </android.support.v7.widget.CardView>
 
     <TextView
@@ -32,11 +137,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:paddingEnd="16dp"
         android:maxLines="2"
         android:ellipsize="end"
         tools:text="Testing Reading fragment."
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/ExtractTitleStyleListItem"
         app:layout_constraintStart_toStartOf="@id/cardview"
         app:layout_constraintTop_toBottomOf="@id/cardview" />
 
@@ -46,9 +151,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:paddingBottom="8dp"
+        android:paddingBottom="@dimen/list_item_vertical_margin"
         tools:text="This is the first few lines of the article. They will be a max lines of 2."
-        style="@style/TextAppearance.AppCompat.Caption"
+        style="@style/ExtractTextStyleListItem"
         android:maxLines="3"
         android:ellipsize="end"
         app:layout_constraintStart_toStartOf="@id/cardview"

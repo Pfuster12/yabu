@@ -98,8 +98,7 @@ class RecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtract>,
                 .load(currentExtract.thumbnail?.source)
                 .transition(withCrossFade())
                 .placeholder(R.color.color500Grey)
-                .error(R.drawable.ic_astronaut_flying)
-                .centerCrop()
+                .error(R.drawable.ground_astronautmhdpi)
                 .into(itemViewHolder?.thumbnail)
     }
 
@@ -147,7 +146,7 @@ class RecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtract>,
 
         val title: TextView = itemView.findViewById(R.id.list_item_title)
         val extract: TextView = itemView.findViewById(R.id.list_item_extract)
-        val thumbnail: ImageView = itemView.findViewById(R.id.list_item_thumbnail)
+        val thumbnail: TopCropImageView = itemView.findViewById(R.id.list_item_thumbnail)
     }
 
     /**

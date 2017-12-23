@@ -119,11 +119,6 @@ class WikiExtractRepository {
             // Filter to take out any extracts starting with an english character
             titles = titles.filterNot {
                 it -> it.title!!.startsWith("w", true) }
-
-            // Logger to check titles
-            for (title in titles) {
-                log?.warning("${ title.title }")
-            }
         }
 
         // Return list

@@ -45,6 +45,7 @@ interface WikiAPIService {
     @GET("w/api.php?action=query" +
             // Retrieve extracts and thumbnail image associated with article
             "&prop=extracts|pageimages" +
+            "&redirects" +
             // Return extract in plain text (Boolean)
             "&explaintext=1" +
             // Return only the intro section (Boolean)

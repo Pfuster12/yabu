@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <View
+        android:id="@+id/grey_100_circle"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@drawable/grey_100_circle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_300_circle"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@drawable/grey_300_circle"
+        app:layout_constraintTop_toBottomOf="@id/grey_100_circle"
+        app:layout_constraintBottom_toTopOf="@+id/grey_500_circle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_500_circle"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@drawable/grey_500_circle"
+        app:layout_constraintTop_toBottomOf="@id/grey_300_circle"
+        app:layout_constraintBottom_toTopOf="@id/grey_700_circle_d1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_700_circle_d1"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@drawable/grey_700_circle"
+        app:layout_constraintTop_toBottomOf="@id/grey_500_circle"
+        app:layout_constraintBottom_toTopOf="@id/grey_700_circle_d2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_700_circle_d2"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@drawable/grey_700_circle"
+        app:layout_constraintTop_toBottomOf="@id/grey_700_circle_d1"
+        app:layout_constraintBottom_toBottomOf="@id/grey_700_circle_d3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+    <View
+        android:id="@+id/grey_700_circle_d3"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@drawable/grey_700_circle"
+        app:layout_constraintTop_toBottomOf="@id/grey_700_circle_d2"
+        app:layout_constraintBottom_toTopOf="@id/grey_700_circle_d4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+
+    <View
+        android:id="@+id/grey_700_circle_d4"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@drawable/grey_700_circle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cardview"/>
+
+</android.support.constraint.ConstraintLayout>

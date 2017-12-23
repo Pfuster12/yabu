@@ -184,8 +184,7 @@ class ReadingFragment : Fragment() {
             return GlideApp.with(context)
                     .load(item)
                     .placeholder(R.color.color500Grey)
-                    .centerCrop()
-                    .error(R.drawable.ic_astronaut_flying)
+                    .error(R.drawable.ground_astronautmhdpi)
                     .transition(withCrossFade())
         }
     }

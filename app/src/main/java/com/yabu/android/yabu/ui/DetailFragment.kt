@@ -57,7 +57,7 @@ class DetailFragment : Fragment() {
         setToolbarTitle(rootView)
 
         // Bind the views with the current extract data
-        rootView.detail_title.text = wikiExtract?.title
+        rootView.detail_title.text = wikiExtract?.title?.trim()
         rootView.detail_extract.text = wikiExtract?.extract?.trim()
 
         // Set thumbnail with Glide.
@@ -65,8 +65,6 @@ class DetailFragment : Fragment() {
                 .load(wikiExtract?.thumbnail?.source)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .placeholder(R.color.color500Grey)
-                .error(R.drawable.ic_astronaut_flying)
-                .centerCrop()
                 .into(rootView.detail_thumbnail)
 
         // return the inflated view
@@ -83,4 +81,4 @@ class DetailFragment : Fragment() {
         // Set the title of the toolbar to the Reading tab.
         toolbarTitle.text = getString(R.string.reading_page_title)
     }
-}// Required empty public constructor
+}
