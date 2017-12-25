@@ -1,6 +1,5 @@
 package com.yabu.android.yabu.ui
 
-import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.TabLayout
@@ -11,7 +10,6 @@ import android.support.v4.content.ContextCompat
 import com.yabu.android.yabu.R
 // Import the layout to avoid findView boilerplate
 import  kotlinx.android.synthetic.main.activity_main.*
-import wordscanner.TextUtils
 
 /**
  * Main Activity holding ViewPager tabs of the main 3 fragments. This is the launch activity unless
@@ -32,9 +30,6 @@ class MainActivity : AppCompatActivity() {
 
         // Setup the TabLayout with the ViewPager with helper function.
         setupTabWithViewPager()
-
-        // Test
-        TextUtils.scanText("b")
     }
 
     /**

@@ -3,16 +3,21 @@ package com.yabu.android.yabu.ui
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.v4.app.Fragment
+import android.text.SpannableString
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 
 import com.yabu.android.yabu.R
 import jsondataclasses.WikiExtract
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 import org.parceler.Parcels
+import utils.WordScanner
 
 /**
  * Fragment for the details of an extract screen.
@@ -26,6 +31,8 @@ class DetailFragment : Fragment() {
         val parcelable: Parcelable? = arguments?.getParcelable(BundleKeys.WIKI_EXTRACTS_BUNDLE)
         Parcels.unwrap<WikiExtract>(parcelable)
     }
+
+    lateinit var spannableString: SpannableString
 
     companion object {
         /**
@@ -46,6 +53,16 @@ class DetailFragment : Fragment() {
     }
 
     /**
+     * Override onCreate to analyze vocabulary.
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Set the clickable spans to the words in onCreate.
+        setSpannable(wikiExtract?.extract)
+    }
+
+    /**
      * Override to inflate layout and bind views.
      */
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -58,7 +75,12 @@ class DetailFragment : Fragment() {
 
         // Bind the views with the current extract data
         rootView.detail_title.text = wikiExtract?.title?.trim()
-        rootView.detail_extract.text = wikiExtract?.extract?.trim()
+
+        // Set the link movement for the text view for clickable spans to work.
+        rootView.detail_extract.movementMethod = LinkMovementMethod.getInstance()
+
+        // Bind the clickable span string as text to the view.
+        rootView.detail_extract.text = spannableString
 
         // Set thumbnail with Glide.
         GlideApp.with(context)
@@ -80,5 +102,40 @@ class DetailFragment : Fragment() {
                 .layout_toolbar.findViewById(R.id.toolbar_title)
         // Set the title of the toolbar to the Reading tab.
         toolbarTitle.text = getString(R.string.reading_page_title)
+    }
+
+    /**
+     * Private helper fun to set the clickable spans to the text
+     * in order to open the definition pop-up.
+     */
+    private fun setSpannable(string: String?) {
+        // Scan the extract text using the utils WordScanner class. Returns a list of
+        // pair values of word and index range within the extract string.
+        val pairs = WordScanner.getUtils().scanText(wikiExtract?.extract)
+
+        // Create the spannable string
+        spannableString = SpannableString(string)
+
+        // Iterate through the pairs to assign a span to the string
+        for (pair in pairs) {
+
+            // Create a clickable span to set the onclick for a pop up
+            val clickableSpan = object : ClickableSpan() {
+                /**
+                 * Override onClick to open the pop up.
+                 */
+                override fun onClick(widget: View?) {
+                    Toast.makeText(this@DetailFragment.context,
+                            "You clicked on me", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            // Set the clickable span to the span string word, with inclusive indexes.
+            spannableString
+                    .setSpan(clickableSpan,
+                            pair.first.last,
+                            pair.first.first + 1,
+                            SpannableString.SPAN_INCLUSIVE_INCLUSIVE)
+        }
     }
 }
