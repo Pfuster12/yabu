@@ -6,6 +6,24 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+    </style>
+
+    <!-- Modal dialog styles -->
+
+    <style name="AppBottomSheetDialogTheme"
+        parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle"
+        parent="Widget.Design.BottomSheet.Modal">
+        <item name="behavior_peekHeight">@dimen/bottom_sheet_peek</item>
+    </style>
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_down</item>
     </style>
 
     <!-- Toolbar theme. -->
@@ -74,6 +92,31 @@
 
     <!--Powered by japanese text-->
     <style name="PoweredJaStyle" parent="Base.TextAppearance.AppCompat.Caption">
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textColor">@color/color500Grey</item>
+    </style>
+
+    <!-- No connection text style -->
+    <style name="NoConnectionBigTextStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/color100Grey</item>
+        <item name="android:fontFamily">@font/caveatbrush_regular</item>
+    </style>
+
+    <!-- No connection text style Japanese -->
+    <style name="NoConnectionBigTextStyleJa">
+        <item name="android:textSize">20sp</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/color100Grey</item>
+    </style>
+
+
+    <!-- No connection text style -->
+    <style name="NoConnectionDetailTextStyle">
+        <item name="android:textSize">12sp</item>
         <item name="android:letterSpacing">0.05</item>
         <item name="android:textColor">@color/color500Grey</item>
     </style>

@@ -143,7 +143,7 @@ class WikiExtractRepository {
             //  the list. Decimal results are rounded to the nearest int.
             val range: Int = (titles.size - start).div(10).toDouble().roundToInt()
 
-            // Construct the title string with a chosen start and step.
+            // Construct the title string with chosen start and step.
             for (i in start until titles.size step range) {
                 // Grab the current title.
                 val currentTitle = titles[i].title
@@ -151,7 +151,6 @@ class WikiExtractRepository {
                 buildTitleQuery =
                         if (i == start) buildTitleQuery.plus(currentTitle)
                         else buildTitleQuery.plus("|" + currentTitle)
-                log?.warning(buildTitleQuery)
             }
         }
 

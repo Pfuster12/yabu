@@ -4,8 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -23,8 +22,8 @@ import com.yabu.android.yabu.R
 import jsondataclasses.WikiExtract
 import viewmodel.WikiExtractsViewModel
 import kotlinx.android.synthetic.main.fragment_reading.view.*
-import kotlinx.android.synthetic.main.reading_list_item.view.*
 import org.parceler.Parcels
+import utils.BundleKeys
 
 /**
  * Reading list fragment, to be paired with ViewPager for tab slide animations in Main Activity.
@@ -81,13 +80,18 @@ class ReadingFragment : Fragment() {
         // function.
         mAdapter = RecyclerViewAdapter(mWikiExtracts,
                 this@ReadingFragment.context, listener = { extract ->
-            // set the function with the clicked extract parameter to start an activity.
-            val intent = Intent(this@ReadingFragment.context, DetailActivity::class.java)
-            // Put the extract as a parcelable extra.
-            intent.putExtra(BundleKeys.WIKI_EXTRACTS_BUNDLE, Parcels.wrap(extract))
-            startActivity(intent)
+            // set the function with the clicked extract parameter to start the framgent
+            // bottom sheet. Put the extract as a parcelable.
+            val bottomSheetFragment = DetailFragment.newInstance(Parcels.wrap(extract))
+            bottomSheetFragment.show(fragmentManager, bottomSheetFragment.tag)
+
         })
         rootView.reading_recycler_view.adapter = mAdapter
+        rootView.reading_recycler_view.itemAnimator = RecyclerViewAnimator()
+
+        if (!isConnected()) {
+            showOnlyNoInternetConnection(rootView)
+        }
 
         // Return the inflated view to complete the onCreate process.
         return rootView
@@ -150,6 +154,23 @@ class ReadingFragment : Fragment() {
         // Set the title of the toolbar to the Reading tab.
         toolbarTitle.text = getString(R.string.reading_page_title)
     }
+
+    /**
+     * Helper fun to check internet connection whether wi-fi or mobile
+     */
+    private fun isConnected(): Boolean {
+        val connMgr = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val networkInfo = connMgr?.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
+    }
+
+    /**
+     * Helper function to show the no connection message
+     */
+    private fun showOnlyNoInternetConnection(rootView: View) {
+        rootView.reading_recycler_view.visibility = View.GONE
+    }
+
 
     /**
      * Preload Model provider for the Glide integration with Recycler View. The class receives

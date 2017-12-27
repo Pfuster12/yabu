@@ -6,60 +6,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <View
-        android:id="@+id/grey_700_circle_u5"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
-        android:background="@drawable/grey_700_circle"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cardview"/>
-
-    <View
-        android:id="@+id/grey_700_circle_u4"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
-        android:background="@drawable/grey_700_circle"
-        app:layout_constraintTop_toBottomOf="@id/grey_700_circle_u5"
-        app:layout_constraintBottom_toTopOf="@id/grey_700_circle_u3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cardview"/>
-
-    <View
-        android:id="@+id/grey_700_circle_u3"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
-        android:background="@drawable/grey_700_circle"
-        app:layout_constraintTop_toBottomOf="@id/grey_700_circle_u4"
-        app:layout_constraintBottom_toTopOf="@id/grey_700_circle_u2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cardview"/>
-
-    <View
-        android:id="@+id/grey_700_circle_u2"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
-        android:background="@drawable/grey_700_circle"
-        app:layout_constraintTop_toBottomOf="@id/grey_700_circle_u3"
-        app:layout_constraintBottom_toTopOf="@id/grey_700_circle_u1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cardview"/>
-
-    <View
-        android:id="@+id/grey_700_circle_u1"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
-        android:background="@drawable/grey_700_circle"
-        app:layout_constraintTop_toBottomOf="@id/grey_700_circle_u2"
-        app:layout_constraintBottom_toTopOf="@id/grey_500_circle_u"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cardview"/>
-
-    <View
         android:id="@+id/grey_500_circle_u"
         android:layout_width="6dp"
         android:layout_height="6dp"
         android:background="@drawable/grey_500_circle"
-        app:layout_constraintTop_toBottomOf="@id/grey_700_circle_u1"
+        android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toTopOf="@id/grey_300_circle_u"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/cardview"/>
@@ -69,7 +20,7 @@
         android:layout_width="7dp"
         android:layout_height="7dp"
         android:background="@drawable/grey_300_circle"
-        app:layout_constraintTop_toBottomOf="@id/grey_500_circle_u"
+        android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toTopOf="@+id/grey_100_circle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/cardview"/>
@@ -90,7 +41,7 @@
         android:layout_height="7dp"
         android:background="@drawable/grey_300_circle"
         app:layout_constraintTop_toBottomOf="@id/grey_100_circle"
-        app:layout_constraintBottom_toTopOf="@+id/grey_500_circle"
+        android:layout_marginTop="24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/cardview"/>
 
@@ -100,16 +51,7 @@
         android:layout_height="6dp"
         android:background="@drawable/grey_500_circle"
         app:layout_constraintTop_toBottomOf="@id/grey_300_circle"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cardview"/>
-
-    <View
-        android:id="@+id/grey_700_circle_d1"
-        android:layout_width="4dp"
-        android:layout_height="4dp"
-        android:background="@drawable/grey_700_circle"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/cardview"/>
 
@@ -134,15 +76,16 @@
 
     <TextView
         android:id="@+id/list_item_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:paddingEnd="16dp"
+        android:layout_marginEnd="16dp"
         android:maxLines="2"
         android:ellipsize="end"
         tools:text="Testing Reading fragment."
         style="@style/ExtractTitleStyleListItem"
         app:layout_constraintStart_toStartOf="@id/cardview"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardview" />
 
     <TextView

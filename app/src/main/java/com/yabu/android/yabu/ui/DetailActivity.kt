@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Parcelable
 import com.yabu.android.yabu.R
-import jsondataclasses.WikiExtract
+import utils.BundleKeys
 
 /**
  * Activity for the extract detail view, showing full text, word definition support and

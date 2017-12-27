@@ -39,6 +39,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="@string/reading_page_title"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:layout_gravity="center"
                     style="@style/ToolbarTitleStyle"/>
             </android.support.v7.widget.Toolbar>
@@ -89,6 +91,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 layout="@layout/footer_powered" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="46dp"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

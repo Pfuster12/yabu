@@ -6,8 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/toolbar_height"
-    style="@style/ToolbarTheme"
-    tools:showIn="@layout/activity_main">
+    style="@style/ToolbarTheme">
 
     <TextView
         android:id="@+id/toolbar_title"

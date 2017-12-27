@@ -1,4 +1,4 @@
-package com.yabu.android.yabu.ui
+package utils
 
 /**
  * Bundle keys class

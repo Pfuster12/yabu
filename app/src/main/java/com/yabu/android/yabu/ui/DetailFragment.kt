@@ -1,14 +1,19 @@
 package com.yabu.android.yabu.ui
 
+import android.app.Dialog
 import android.os.Bundle
 import android.os.Parcelable
+import android.support.design.widget.BottomSheetDialog
+import android.support.design.widget.BottomSheetDialogFragment
 import android.support.v4.app.Fragment
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -17,12 +22,13 @@ import com.yabu.android.yabu.R
 import jsondataclasses.WikiExtract
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 import org.parceler.Parcels
+import utils.BundleKeys
 import utils.WordScanner
 
 /**
  * Fragment for the details of an extract screen.
  */
-class DetailFragment : Fragment() {
+class DetailFragment : BottomSheetDialogFragment() {
 
     /**
      * Lazy init the parcelable unwrap into the current wikiExtract to have class wide access to it.
@@ -32,7 +38,7 @@ class DetailFragment : Fragment() {
         Parcels.unwrap<WikiExtract>(parcelable)
     }
 
-    lateinit var spannableString: SpannableString
+    private lateinit var spannableString: SpannableString
 
     companion object {
         /**
@@ -101,7 +107,7 @@ class DetailFragment : Fragment() {
         val toolbarTitle: TextView = rootView
                 .layout_toolbar.findViewById(R.id.toolbar_title)
         // Set the title of the toolbar to the Reading tab.
-        toolbarTitle.text = getString(R.string.reading_page_title)
+        toolbarTitle.text = getString(R.string.bottom_sheet_toolbar_title_prefix, wikiExtract?.title)
     }
 
     /**
