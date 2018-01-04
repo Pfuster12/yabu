@@ -1,11 +1,15 @@
 package com.yabu.android.yabu.ui
 
 import android.content.Intent
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.yabu.android.yabu.R
 // Import the layout to avoid findView boilerplate
 import kotlinx.android.synthetic.main.activity_start_up.*
+import repository.JishoRepository
+import java.net.URL
+import java.util.logging.Logger
 
 class StartUpActivity : AppCompatActivity() {
 

@@ -54,6 +54,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
+            android:id="@+id/extract_text_parent"
             android:orientation="vertical"
             android:layout_height="wrap_content"
             android:layout_width="match_parent">
@@ -74,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                tools:text="Testing Details Fragment"
+                tools:text="Testing Details Fragment but heyo why don't you tell me something."
                 style="@style/ExtractTextStyleDetail" />
 
             <!-- this sits at the bottom of the ScrollView,

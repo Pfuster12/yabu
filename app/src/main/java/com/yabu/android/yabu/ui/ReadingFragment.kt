@@ -24,6 +24,8 @@ import viewmodel.WikiExtractsViewModel
 import kotlinx.android.synthetic.main.fragment_reading.view.*
 import org.parceler.Parcels
 import utils.BundleKeys
+import utils.WordScanner
+import java.util.logging.Logger
 
 /**
  * Reading list fragment, to be paired with ViewPager for tab slide animations in Main Activity.
@@ -115,6 +117,8 @@ class ReadingFragment : Fragment() {
                 // Add the received wikiExtract list to the list hooked in the adapter.
                 //mWikiExtracts.addAll(wikiExtracts)
                 mWikiExtracts.addAll(wikiExtracts)
+                Logger.getAnonymousLogger().warning(WordScanner.getUtils().buildJishoQuery(mWikiExtracts[4].extract))
+                Logger.getLogger("TAG").warning(WordScanner.getUtils().buildJishoQuery(mWikiExtracts[4].extract))
                 mAdapter.notifyDataSetChanged()
             }
         }

@@ -22,6 +22,10 @@ class WikiExtractRepository {
 
     companion object {
         val log: Logger? = Logger.getLogger(WikiExtractRepository::class.java.simpleName)
+        // Instance getter helper function.
+        fun getInstance(): WikiExtractRepository {
+            return WikiExtractRepository()
+        }
     }
 
     // Create a service instance from the companion object function.
@@ -43,7 +47,7 @@ class WikiExtractRepository {
 
             /**
              * Override function for onResponse callback of our http request. onResponse returns a
-             * Response object from okHTTP in String format through the Scalar converter passed in
+             * Response object from okHTTP in json format through the Moshi converter passed in
              * the retrofit object for us to parse the JSON. Once parsed data is set as a wikiExtract list.
              */
             override fun onResponse(call: Call<WikiTitlesJSONResponse>,

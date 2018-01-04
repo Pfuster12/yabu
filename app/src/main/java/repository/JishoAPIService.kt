@@ -3,9 +3,9 @@ package repository
 import jsondataclasses.JishoKeywordJSONResponse
 import retrofit2.Call
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.Path
 
 /**
  * Web Service class for the Jisho API returning word definitions. @GET Retrofit functions
@@ -23,16 +23,17 @@ interface JishoAPIService {
             // The Retrofit class generates an implementation of the WikiAPIService interface.
             val retrofit: Retrofit = Retrofit.Builder()
                     .baseUrl(endpoint)
-                    .addConverterFactory(MoshiConverterFactory.create())
+                    .addConverterFactory(ScalarsConverterFactory.create())
                     .build()
+
             return retrofit.create(JishoAPIService::class.java)
         }
     }
 
     /**
      * GET function of Retrofit to return word definitions from Jisho.
-     * The api calls for a query of the inputted keyword. Returns a WordJSON object
+     * The api calls for a query hof the inputted keyword. Returns a WordJSON object
      */
-    @GET("api/v1/search/words?")
-    fun getWords(@Query("keyword") keyword: String): Call<JishoKeywordJSONResponse>
+    @GET("search/{keyword}")
+    fun getWordsFromJisho(@Path("keyword") keyword: String?): Call<String>
 }

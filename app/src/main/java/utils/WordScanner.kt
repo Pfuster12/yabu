@@ -1,5 +1,7 @@
 package utils
 
+import android.util.Log
+
 /**
  * Helper util to make extract text spannable, scan the text for kanji and extract them
  * for api calls, and set onClicks on the different words extracted.r
@@ -23,7 +25,7 @@ class WordScanner {
      */
     fun scanText(extract: String?): MutableList<Pair<IntRange, String>> {
         // init an empty pair list of the index range and the word.
-        val pairIndexWordList = mutableListOf<Pair<IntRange, String>>()
+        val pairsOfIndexWord = mutableListOf<Pair<IntRange, String>>()
 
         // Iterate through the chars in the extract string
         if (extract != null) {
@@ -34,12 +36,12 @@ class WordScanner {
 
                 // Check the Unicode range and join the kanji words
                 // Put into the map the index of the kanji and the word as well.
-                pairIndexWordList.addAll(checkUnicodeRange(i, codePoint, extract))
+                pairsOfIndexWord.addAll(checkUnicodeRange(i, codePoint, extract))
             }
         }
 
         // Return the list of kanji strings
-        return pairIndexWordList
+        return pairsOfIndexWord
     }
 
     /**
@@ -134,7 +136,7 @@ class WordScanner {
     }
 
     /**
-     * Helper function to find what kanji to join or not as delimited by hiragana and katana
+     * Helper function to find what kanji to join or not as delimited by hiragana and katakana
      * returning a string of the word kanji.
      */
     private fun joinKanji(index: Int, string: String): MutableList<Pair<IntRange, String>> {
@@ -255,5 +257,24 @@ class WordScanner {
 
         // Return boolean
         return isCJK
+    }
+
+    fun buildJishoQuery(extract: String?): String {
+        // Scan the text to extract each kanji into a pair with its index range.
+        val pairs = scanText(extract)
+
+        // init a build string for the query
+        val jishoQuery = ""
+
+        // Iterate through the list of pairs.
+        for (pair in pairs) {
+            // Grab the kanji word from the pair.
+            val kanjiChars = pair.second
+            // Add the word to the query string and a comma to separate.
+            jishoQuery.plus(kanjiChars + ",")
+        }
+
+        // Return the concatenated string
+        return jishoQuery
     }
 }
