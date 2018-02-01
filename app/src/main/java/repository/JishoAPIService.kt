@@ -31,9 +31,16 @@ interface JishoAPIService {
     }
 
     /**
-     * GET function of Retrofit to return word definitions from Jisho.
-     * The api calls for a query hof the inputted keyword. Returns a WordJSON object
+     * GET function of Retrofit to return word furigana from Jisho.
+     * The api calls for a query of the inputted keyword. Returns a string of html to scrape.
      */
     @GET("search/{keyword}")
     fun getWordsFromJisho(@Path("keyword") keyword: String?): Call<String>
+
+    /**
+     * GET function of Retrofit to return word definitions from Jisho.
+     * The api calls for a query hof the inputted keyword. Returns a string of html to scrape.
+     */
+    @GET("search/{keyword}")
+    fun getDefinitionFromJisho(@Path("keyword") keyword: String?): Call<String>
 }

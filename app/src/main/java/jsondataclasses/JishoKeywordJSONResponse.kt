@@ -16,11 +16,23 @@ data class JishoWord(val is_common: Boolean, val japanese: Kanji, val sense: Sen
 class Kanji(val word: String, val reading: String) {
 
     // Secondary parameter for parts of speech.
-    var parts_of_speech = ""
+    var mParts_of_speech = ""
+    var mDefinitions = mutableListOf<String>()
+    var is_common = false
+    var jlptTag = ""
 
     // Secondary constructor with parts of speech for simpler pojo before sending for a word def.
     constructor(word: String, reading: String, partsOfSpeech: String) : this(word, reading) {
-        parts_of_speech = partsOfSpeech
+        mParts_of_speech = partsOfSpeech
+    }
+
+    // Secondary constructor with parts of speech for simpler pojo before sending for a word def.
+    constructor(word: String, reading: String, partsOfSpeech: String,
+                definitions: MutableList<String>,
+                isCommon: Boolean, jlpt: String) : this(word, reading, partsOfSpeech) {
+        mDefinitions = definitions
+        is_common = isCommon
+        jlptTag = jlpt
     }
 }
 

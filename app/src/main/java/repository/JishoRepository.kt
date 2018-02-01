@@ -5,10 +5,10 @@ import jsondataclasses.Kanji
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import utils.WordScanner
 import java.util.logging.Logger
 
 /**
@@ -18,7 +18,7 @@ import java.util.logging.Logger
 class JishoRepository {
 
     companion object {
-        val log: Logger? = Logger.getLogger(WikiExtractRepository::class.java.simpleName)
+        val log: Logger? = Logger.getLogger(JishoRepository::class.java.simpleName)
         // Get an instance helper function
         fun getInstance(): JishoRepository {
             return JishoRepository()
@@ -28,18 +28,19 @@ class JishoRepository {
     // Create a jisho service instance
     private val apiService by lazy { JishoAPIService.create() }
 
-    // Variable for the LiveData Jisho Word to be set in the response callback of Retrofit.
+    // Variable for the LiveData Kanji pair to be set in the response callback of Retrofit.
     val data: MutableLiveData<MutableList<Pair<IntRange, Kanji>>> = MutableLiveData()
 
+    // Variable for the LiveData Kanji returned from Jisho
+    val wordData: MutableLiveData<Kanji> = MutableLiveData()
+
     /**
-     * Repo fun to retrieve the word definitions from Jisho as retrieved from the extract
+     * Repo fun to retrieve the word furigana from Jisho as retrieved from the extract
      * texts by the word scanner.
      */
     fun getWords(words: String?, extract: String?): MutableLiveData<MutableList<Pair<IntRange, Kanji>>> {
         // Get the Call for the html string
         val jishoCall: Call<String> = apiService.getWordsFromJisho(words)
-
-        val pairs = WordScanner.getUtils().scanText(extract)
 
         // Enqueue a call to async
         jishoCall.enqueue(object : Callback<String> {
@@ -55,20 +56,15 @@ class JishoRepository {
                 // Grab the kanji pojos from the html string by scraping with jsoup
                 val kanjis = parseHtmlForFurigana(htmlString)
 
-                log?.warning(kanjis[0].word)
-
-                // Combine the extract int range
-                val pairIndexKanji = combineKanjisAndIndex(pairs, kanjis)
-
                 // Set the LiveData value to the html string.
-                data.value = pairIndexKanji
+                data.value = combineKanjisAndIndex(extract, kanjis)
             }
 
             /**
              * Override function for onFailure callback of our http request.
              */
             override fun onFailure(call: Call<String>?, t: Throwable?) {
-                log?.warning("Jisho Http request failed.")
+                log?.warning("Jisho Furigana Http request failed.")
             }
         })
 
@@ -77,10 +73,42 @@ class JishoRepository {
     }
 
     /**
+     * Repo fun to retrieve the definition of a word from Jisho as touched by a user to show
+     * the callout bubble definition.
+     */
+    fun getDefinitions(protoKanji: Kanji): MutableLiveData<Kanji> {
+        var keyword: String = protoKanji.word
+        // Check if it is one char to add the #kanji metatag
+        when (protoKanji.word.length == 1) {
+            true -> keyword = protoKanji.word + "#kanji"
+        }
+        // Get the call for the html string
+        val jishoCall: Call<String> = apiService.getDefinitionFromJisho(keyword)
+
+        // Enqueue a call to async
+        jishoCall.enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>?, response: Response<String>?) {
+                // Grab the response body which is the string of the html.
+                val htmlString = response?.body()
+
+                // Parse html for definitions
+                wordData.value = parseHtmlForDefinitions(protoKanji, htmlString)
+            }
+
+            override fun onFailure(call: Call<String>?, t: Throwable?) {
+                log?.warning("Jisho Definition Http request failed.")
+            }
+
+        })
+
+        return wordData
+    }
+
+    /**
      * Helper fun to scrape the jisho html for the word definitions and furigana using
      * the Jsoup library.
      */
-    private fun parseHtmlForFurigana(html: String?): MutableList<Kanji> {
+    private fun parseHtmlForFurigana(html: String?): List<Kanji> {
         // init a list of Kanji pojos
         val kanjis = mutableListOf<Kanji>()
 
@@ -111,32 +139,101 @@ class JishoRepository {
             kanjis.add(kanjiPojo)
         }
 
+        // Filter the list
         // Return the list
-        return kanjis
+        return kanjis.filterNot { kanji -> kanji.word.isEmpty() }
+
+    }
+
+    private fun parseHtmlForDefinitions(protoKanji: Kanji, html: String?): Kanji {
+        // Boolean to see if common tag is present
+        var isCommon = false
+        var jlptTag = ""
+        val meaningList = mutableListOf<String>()
+
+        // Parse the string response from the Retrofit call into a Jsoup html doc.
+        val jsoup: Document = Jsoup.parse(html)
+
+        if (protoKanji.word.length == 1) {
+            // Grab the content of the exact word definition div
+            val content: Elements = jsoup.getElementsByClass("kanji details")
+
+            if (content.size != 0) {
+                // Grab the kanji meaning element
+                val definitions = content[0].getElementsByClass("kanji-details__main-meanings")
+
+                if (definitions.size != 0) {
+                    meaningList.add(definitions[0].text().trim())
+                }
+            }
+        } else {
+            // Grab the content of the exact word definition div
+            val content: Elements = jsoup.getElementsByClass("exact_block")
+
+            if (content.size != 0) {
+                // Grab the tags element
+                val tags = content[0].getElementsByClass("concept_light-status")
+
+                // Check if there are tags
+                if (tags.size != 0) {
+                    // Grab the common tag
+                    val common = tags[0].getElementsByClass("concept_light-tag concept_light-common success label")
+
+                    // Check if there is a common tag
+                    if (common.size != 0) {
+                        isCommon = true
+                    }
+
+                    // Grab the JLPT tag
+                    val jlptElement = tags[0].getElementsByClass("concept_light-tag label")
+
+                    if (jlptElement.size != 0) {
+                        jlptTag = jlptElement[0].data()
+                    }
+                }
+
+                // Grab the definitions
+                val meanings = content[0].getElementsByClass("meaning-meaning")
+                // Add each meaning to the definition list.
+                meanings.forEach { meaning -> meaningList.add(meaning.text().trim()) }
+
+                log?.warning(meaningList[0] + " woo")
+            }
+        }
+
+        // Return a kanji with definitions and tags.
+        return Kanji(protoKanji.word, protoKanji.reading, protoKanji.mParts_of_speech,
+                meaningList, isCommon, jlptTag)
     }
 
     /**
      * Helper fun to combine the Kanjis from the html to the int ranges.
      */
-    fun combineKanjisAndIndex(pairs: MutableList<Pair<IntRange, String>>,
-                              kanjis: MutableList<Kanji>): MutableList<Pair<IntRange, Kanji>> {
+    fun combineKanjisAndIndex(extract: String?,
+                              kanjis: List<Kanji>): MutableList<Pair<IntRange, Kanji>> {
         // Init the index and kanji pairs
         val kanjiIndexPairs = mutableListOf<Pair<IntRange, Kanji>>()
 
-        // Start a while loop.
+        // Start a while loop with start index.
+        var startIndex = 0
         var i = 0
         while (i < kanjis.size) {
-            // Grab the current pair
-            val currentPair = pairs[i]
-            // Grab the current kanji
-            val currentKanji = kanjis[i]
+            // Grab the index of the kanji in the extract text.
+            val index1: Int = extract!!.indexOf(kanjis[i].word, startIndex, true)
 
-            // Put the current int range and the current kanji together into the new list
-            kanjiIndexPairs.add(Pair(currentPair.first, currentKanji))
+            // To get the int range, add the size of the kanji chars to index1
+            val index2 = index1 + (kanjis[i].word.length - 1)
+            // Create the Int Range
+            val intRange = IntRange(index1, index2)
 
+            // Add the pair to the list
+            kanjiIndexPairs.add(Pair(intRange, kanjis[i]))
             // Increment i
             i++
+            // Make startIndex the index of the kanji in the extract since the list is ascending.
+            startIndex = index1
         }
+
 
         // Return the kanji-index pairs
         return kanjiIndexPairs

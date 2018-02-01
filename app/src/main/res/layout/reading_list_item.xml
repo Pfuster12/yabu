@@ -6,52 +6,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <View
-        android:id="@+id/grey_500_circle_u"
-        android:layout_width="6dp"
-        android:layout_height="6dp"
-        android:background="@drawable/grey_500_circle"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@id/grey_300_circle_u"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cardview"/>
-
-    <View
-        android:id="@+id/grey_300_circle_u"
-        android:layout_width="7dp"
-        android:layout_height="7dp"
-        android:background="@drawable/grey_300_circle"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/grey_100_circle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cardview"/>
-
-    <View
         android:id="@+id/grey_100_circle"
         android:layout_width="9dp"
         android:layout_height="9dp"
         android:background="@drawable/grey_100_circle"
         app:layout_constraintTop_toTopOf="@id/list_item_title"
         app:layout_constraintBottom_toBottomOf="@id/list_item_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cardview"/>
-
-    <View
-        android:id="@+id/grey_300_circle"
-        android:layout_width="7dp"
-        android:layout_height="7dp"
-        android:background="@drawable/grey_300_circle"
-        app:layout_constraintTop_toBottomOf="@id/grey_100_circle"
-        android:layout_marginTop="24dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/cardview"/>
-
-    <View
-        android:id="@+id/grey_500_circle"
-        android:layout_width="6dp"
-        android:layout_height="6dp"
-        android:background="@drawable/grey_500_circle"
-        app:layout_constraintTop_toBottomOf="@id/grey_300_circle"
-        android:layout_marginTop="24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/cardview"/>
 
@@ -92,7 +52,7 @@
         android:id="@+id/list_item_extract"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:paddingBottom="@dimen/list_item_vertical_margin"
         tools:text="This is the first few lines of the article. They will be a max lines of 2."

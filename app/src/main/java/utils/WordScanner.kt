@@ -1,7 +1,5 @@
 package utils
 
-import android.util.Log
-
 /**
  * Helper util to make extract text spannable, scan the text for kanji and extract them
  * for api calls, and set onClicks on the different words extracted.r
@@ -245,7 +243,7 @@ class WordScanner {
         }
 
         // Grab the code-point of the after character when it is not the last.
-        if (currentIndex < string.length) {
+        if (currentIndex < string.length - 1) {
             val codePoint = Character.codePointAt(string[afterIndex].toString(), 0)
             if (codePoint in cjkRange.startCodePoint..cjkRange.endCodePoint
                     || codePoint == cjkRange.iterationCodePoint) {
@@ -264,14 +262,14 @@ class WordScanner {
         val pairs = scanText(extract)
 
         // init a build string for the query
-        val jishoQuery = ""
+        var jishoQuery = ""
 
         // Iterate through the list of pairs.
         for (pair in pairs) {
             // Grab the kanji word from the pair.
             val kanjiChars = pair.second
             // Add the word to the query string and a comma to separate.
-            jishoQuery.plus(kanjiChars + ",")
+            jishoQuery = jishoQuery + kanjiChars + ","
         }
 
         // Return the concatenated string

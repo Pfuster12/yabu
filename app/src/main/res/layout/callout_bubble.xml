@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/callout_bubble"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ic_callout_bubble_middle_shadow"
+    android:orientation="vertical"
+    style="@style/CalloutBubbleStyle"
+    android:elevation="4dp">
+
+    <TextView
+        android:id="@+id/callout_title"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Word"
+        style="@style/WordTitleStyleCallout" />
+
+    <TextView
+        android:id="@+id/callout_reading"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="reading"
+        style="@style/PoweredJaStyle"
+        android:maxLines="1"
+        android:ellipsize="end"/>
+
+    <TextView
+        android:id="@+id/callout_definition_alone"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="1. This is the definition"
+        style="@style/PoweredJaStyle"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/callout_definition_1"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="1. This is the definition"
+        android:maxLines="2"
+        android:ellipsize="end"
+        style="@style/PoweredJaStyle" />
+
+    <TextView
+        android:id="@+id/callout_definition_2"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="2. A second one"
+        android:maxLines="2"
+        android:ellipsize="end"
+        style="@style/PoweredJaStyle" />
+</LinearLayout>

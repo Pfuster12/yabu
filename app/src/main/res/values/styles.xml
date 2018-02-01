@@ -63,24 +63,25 @@
         <item name="android:textColor">@color/color700Grey</item>
     </style>
 
-    <!--Extract title style in detail view-->
-    <style name="ExtractTitleStyleDetail" parent="Base.TextAppearance.AppCompat.Headline">
-        <item name="android:letterSpacing">0.05</item>
-        <item name="android:textColor">@color/color100Grey</item>
-    </style>
-
-    <!--Extract title style in detail view-->
+    <!--Extract title style in list item view-->
     <style name="ExtractTitleStyleListItem" parent="Base.TextAppearance.AppCompat.Headline">
         <item name="android:letterSpacing">0.05</item>
         <item name="android:textColor">@color/color100Grey</item>
-        <item name="android:lineSpacingMultiplier">2</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+    </style>
+
+    <!--Extract title style in detail view-->
+    <style name="ExtractTitleStyleDetail" parent="ExtractTitleStyleListItem">
+        <item name="android:textStyle">bold</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
     </style>
 
     <!--Extract text style in detail view-->
     <style name="ExtractTextStyleDetail" parent="Base.TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">21sp</item>
         <item name="android:letterSpacing">0.05</item>
         <item name="android:textColor">@color/color300Grey</item>
-        <item name="android:lineSpacingMultiplier">2</item>
+        <item name="android:lineSpacingMultiplier">2.2</item>
     </style>
 
     <!--Extract text style in detail view-->
@@ -94,6 +95,27 @@
     <style name="PoweredJaStyle" parent="Base.TextAppearance.AppCompat.Caption">
         <item name="android:letterSpacing">0.05</item>
         <item name="android:textColor">@color/color500Grey</item>
+    </style>
+
+    <!--Furigana text style-->
+    <style name="FuriganaStyle" parent="Base.TextAppearance.AppCompat.Caption">
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textColor">@color/color500Grey</item>
+    </style>
+
+    <!--Furigana text style-->
+    <style name="CalloutBubbleStyle">
+        <item name="android:minHeight">100dp</item>
+        <item name="android:minWidth">140dp</item>
+        <item name="android:maxWidth">260dp</item>
+    </style>
+
+    <!--Extract title style in detail view-->
+    <style name="WordTitleStyleCallout" parent="Base.TextAppearance.AppCompat.Medium">
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textColor">@color/color100Grey</item>
     </style>
 
     <!-- No connection text style -->
@@ -112,7 +134,6 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/color100Grey</item>
     </style>
-
 
     <!-- No connection text style -->
     <style name="NoConnectionDetailTextStyle">

@@ -21,6 +21,11 @@
     <string name="no_connection_big_ja">だめ! 私たちあなたを失った。</string>
     <string name="no_connection_detail">Looks like there is no Internet Connection. Try turning it on and swipe to refresh.</string>
 
+    <!-- Detail fragment -->
+
+    <!-- Main screens tool bar titles -->
+    <string name="no_definition">No definition available</string>
+
     <!-- Tag for the bottom sheet fragment -->
     <string name="bottom_sheet_fragment_tag">Bottom Sheet Fragment</string>
     <string name="bottom_sheet_toolbar_title_prefix">Read about %1$s</string>
