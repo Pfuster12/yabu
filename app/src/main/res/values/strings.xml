@@ -26,6 +26,9 @@
     <!-- Main screens tool bar titles -->
     <string name="no_definition">No definition available</string>
 
+    <!-- Main screens tool bar titles -->
+    <string name="no_extract_text">Oh no! There is no text.</string>
+
     <!-- Tag for the bottom sheet fragment -->
     <string name="bottom_sheet_fragment_tag">Bottom Sheet Fragment</string>
     <string name="bottom_sheet_toolbar_title_prefix">Read about %1$s</string>
@@ -34,6 +37,23 @@
     <string name="powered_by">Powered by open-source awesomeness</string>
     <!-- Powered by text -->
     <string name="powered_by_ja" translatable="false">素晴らしい~オープン・ソースで動く</string>
+
+    <!-- Common tag-->
+    <string name="common_tag" translatable="false">common</string>
+
+    <!-- JLPT N1 text-->
+    <string name="JLPTN1" translatable="false">JLPT N1</string>
+    <!-- JLPT N2 text-->
+    <string name="JLPTN2" translatable="false">JLPT N2</string>
+    <!-- JLPT N3 text-->
+    <string name="JLPTN3" translatable="false">JLPT N3</string>
+    <!-- JLPT N4 text-->
+    <string name="JLPTN4" translatable="false">JLPT N4</string>
+    <!-- JLPT N5 text-->
+    <string name="JLPTN5" translatable="false">JLPT N5</string>
+
+    <!-- Jisho link text callout-->
+    <string name="callout_link_details"><u>Details</u></string>
 
     <!-- Content Descriptions -->
 

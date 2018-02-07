@@ -16,7 +16,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:alpha="0"/>
 
     <ImageView
         android:layout_width="0dp"
@@ -39,7 +40,8 @@
         android:layout_marginTop="@dimen/start_up_titles_margin_top"
         app:layout_constraintTop_toBottomOf="@id/start_up_logo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:alpha="0"/>
 
     <LinearLayout
         android:id="@+id/start_up_sign_up_group"
@@ -50,7 +52,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:orientation="horizontal"
-        >
+        android:alpha="0">
 
         <ImageView
             android:id="@+id/start_up_icon_sign_up"
@@ -77,5 +79,6 @@
         android:layout_marginTop="@dimen/start_up_titles_margin_top"
         app:layout_constraintTop_toBottomOf="@id/start_up_sign_up_group"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:alpha="0"/>
 </android.support.constraint.ConstraintLayout>

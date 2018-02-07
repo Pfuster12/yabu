@@ -24,6 +24,11 @@
         </activity>
         <activity android:name=".ui.DetailActivity"
             android:launchMode="singleTop"/>
+
+        <provider
+            android:authorities="com.yabu.android.yabu"
+            android:name="sql.KanjisContentProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

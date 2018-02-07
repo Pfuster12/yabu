@@ -1,5 +1,6 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/detail_fragment_parent_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
@@ -48,12 +49,14 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scroll_parent"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
+            android:id="@+id/text_parent_detail"
             android:orientation="vertical"
             android:layout_height="wrap_content"
             android:layout_width="match_parent">
@@ -70,7 +73,14 @@
                     layout="@layout/callout_bubble"
                     android:visibility="gone"/>
 
+                <include
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    layout="@layout/callout_bubble_loading"
+                    android:visibility="invisible"/>
+
                 <LinearLayout
+                    android:id="@+id/detail_text_parent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -97,6 +107,12 @@
                         android:paddingBottom="32dp"
                         tools:text="Testing Details Fragment but heyo why don't you tell me something."
                         style="@style/ExtractTextStyleDetail" />
+
+                    <View
+                        android:id="@+id/detail_padding_bottom"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:visibility="gone"/>
                 </LinearLayout>
             </FrameLayout>
 

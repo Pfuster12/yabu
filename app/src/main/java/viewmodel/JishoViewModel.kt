@@ -26,6 +26,8 @@ class JishoViewModel : ViewModel() {
         // Build the query string for the api call
         val queryString = WordScanner.getUtils().buildJishoQuery(extract)
 
+        Logger.getLogger("TEST").warning(queryString)
+
         // Set the live data object
         kanjis = JishoRepository.getInstance().getWords(queryString, extract)
     }

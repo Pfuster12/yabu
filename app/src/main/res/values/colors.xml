@@ -4,7 +4,18 @@
     <color name="colorPrimary">#17D68A</color>
     <color name="colorPrimaryDark">@color/color100Grey</color>
     <color name="colorAccent">#17D68A</color>
+
+    <!-- Background color -->
     <color name="colorLightBackground">@android:color/background_light</color>
+
+    <!-- Background color -->
+    <color name="colorJLPTN1">#cc0000</color>
+    <color name="colorJLPTN2">#cd2e02</color>
+    <color name="colorJLPTN3">#ce5b04</color>
+    <color name="colorJLPTN4">#cfb507</color>
+    <color name="colorJLPTN5">@color/colorAccent</color>
+
+    <!-- Grey gradient scheme -->
     <color name="color100Grey">#525252</color>
     <color name="color300Grey">#696969</color>
     <color name="color500Grey">#919191</color>

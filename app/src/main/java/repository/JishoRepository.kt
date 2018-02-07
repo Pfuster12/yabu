@@ -82,6 +82,8 @@ class JishoRepository {
         when (protoKanji.word.length == 1) {
             true -> keyword = protoKanji.word + "#kanji"
         }
+
+        val url = "http://jisho.org/search/" + keyword
         // Get the call for the html string
         val jishoCall: Call<String> = apiService.getDefinitionFromJisho(keyword)
 
@@ -92,7 +94,7 @@ class JishoRepository {
                 val htmlString = response?.body()
 
                 // Parse html for definitions
-                wordData.value = parseHtmlForDefinitions(protoKanji, htmlString)
+                wordData.value = parseHtmlForDefinitions(protoKanji, htmlString, url)
             }
 
             override fun onFailure(call: Call<String>?, t: Throwable?) {
@@ -145,10 +147,11 @@ class JishoRepository {
 
     }
 
-    private fun parseHtmlForDefinitions(protoKanji: Kanji, html: String?): Kanji {
+    private fun parseHtmlForDefinitions(protoKanji: Kanji, html: String?, url: String): Kanji {
         // Boolean to see if common tag is present
         var isCommon = false
         var jlptTag = ""
+        var jlptid = -1
         val meaningList = mutableListOf<String>()
 
         // Parse the string response from the Retrofit call into a Jsoup html doc.
@@ -164,6 +167,24 @@ class JishoRepository {
 
                 if (definitions.size != 0) {
                     meaningList.add(definitions[0].text().trim())
+                }
+
+                val stats = content[0].getElementsByClass("kanji_stats")
+
+                if (stats.size != 0) {
+                    val jlptElement = stats[0].getElementsByClass("jlpt")
+
+                    if (jlptElement.size != 0) {
+                        val jlptText = jlptElement[0].text()
+
+                        when (jlptText) {
+                            "JLPT level N1" -> jlptid = 1
+                            "JLPT level N2" -> jlptid = 2
+                            "JLPT level N3" -> jlptid = 3
+                            "JLPT level N4" -> jlptid = 4
+                            "JLPT level N5" -> jlptid = 5
+                        }
+                    }
                 }
             }
         } else {
@@ -189,6 +210,14 @@ class JishoRepository {
 
                     if (jlptElement.size != 0) {
                         jlptTag = jlptElement[0].data()
+
+                        when (jlptTag) {
+                            "JLPT N1" -> jlptid = 1
+                            "JLPT N2" -> jlptid = 2
+                            "JLPT N3" -> jlptid = 3
+                            "JLPT N4" -> jlptid = 4
+                            "JLPT N5" -> jlptid = 5
+                        }
                     }
                 }
 
@@ -196,14 +225,12 @@ class JishoRepository {
                 val meanings = content[0].getElementsByClass("meaning-meaning")
                 // Add each meaning to the definition list.
                 meanings.forEach { meaning -> meaningList.add(meaning.text().trim()) }
-
-                log?.warning(meaningList[0] + " woo")
             }
         }
 
         // Return a kanji with definitions and tags.
         return Kanji(protoKanji.word, protoKanji.reading, protoKanji.mParts_of_speech,
-                meaningList, isCommon, jlptTag)
+                meaningList, isCommon, jlptid, url)
     }
 
     /**
@@ -231,7 +258,7 @@ class JishoRepository {
             // Increment i
             i++
             // Make startIndex the index of the kanji in the extract since the list is ascending.
-            startIndex = index1
+            startIndex = index1 + 1
         }
 
 

@@ -40,7 +40,8 @@
         style="@style/NoConnectionDetailTextStyle"
         android:paddingStart="36dp"
         android:paddingEnd="36dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:alpha="0"/>
 
     <View
         android:layout_width="match_parent"

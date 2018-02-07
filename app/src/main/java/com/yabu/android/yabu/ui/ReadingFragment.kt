@@ -22,6 +22,7 @@ import com.yabu.android.yabu.R
 import jsondataclasses.WikiExtract
 import viewmodel.WikiExtractsViewModel
 import kotlinx.android.synthetic.main.fragment_reading.view.*
+import kotlinx.android.synthetic.main.no_connection.view.*
 import org.parceler.Parcels
 import utils.BundleKeys
 import utils.WordScanner
@@ -173,6 +174,9 @@ class ReadingFragment : Fragment() {
      */
     private fun showOnlyNoInternetConnection(rootView: View) {
         rootView.reading_recycler_view.visibility = View.GONE
+        rootView.reading_no_connection.visibility = View.VISIBLE
+        rootView.reading_no_connection.reading_no_connection_detail
+                .animate().alpha(1f).setDuration(2000).setStartDelay(1500).start()
     }
 
 

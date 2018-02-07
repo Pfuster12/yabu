@@ -19,7 +19,8 @@ class Kanji(val word: String, val reading: String) {
     var mParts_of_speech = ""
     var mDefinitions = mutableListOf<String>()
     var is_common = false
-    var jlptTag = ""
+    var jlptTag = 5
+    var url = ""
 
     // Secondary constructor with parts of speech for simpler pojo before sending for a word def.
     constructor(word: String, reading: String, partsOfSpeech: String) : this(word, reading) {
@@ -29,10 +30,12 @@ class Kanji(val word: String, val reading: String) {
     // Secondary constructor with parts of speech for simpler pojo before sending for a word def.
     constructor(word: String, reading: String, partsOfSpeech: String,
                 definitions: MutableList<String>,
-                isCommon: Boolean, jlpt: String) : this(word, reading, partsOfSpeech) {
+                isCommon: Boolean, jlpt: Int,
+                linkUrl: String) : this(word, reading, partsOfSpeech) {
         mDefinitions = definitions
         is_common = isCommon
         jlptTag = jlpt
+        url = linkUrl
     }
 }
 
