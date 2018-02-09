@@ -2,10 +2,15 @@ package repository
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.content.Context
 import jsondataclasses.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import sql.WikiExtractsSQLDao
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import java.util.logging.Logger
 import kotlin.math.roundToInt
 
@@ -34,72 +39,72 @@ class WikiExtractRepository {
     // Variable for the LiveData object to be set in the response callback of Retrofit.
     val data: MutableLiveData<MutableList<WikiExtract>> = MutableLiveData()
 
+    // Executor variable to execute in worker threads
+    private val executor: ExecutorService = Executors.newCachedThreadPool()
+
+    private val wikiDao = WikiExtractsSQLDao.getInstance()
+
     /**
      * Repo function to launch an async through the retrofit Call and return the list of
      * daily titles to use and insert in the extract query. In onResponse the received titles
      * will be used for the getExtracts() parameter.
      */
-    fun getDailyExtracts(): LiveData<MutableList<WikiExtract>> {
-        // Call for the titles query json object
-        val titlesCall: Call<WikiTitlesJSONResponse> = apiService.requestDailyTitles()
-        // Enqueue a call to async
-        titlesCall.enqueue(object : Callback<WikiTitlesJSONResponse> {
+    fun getDailyExtracts(context: Context): LiveData<MutableList<WikiExtract>> {
+        // check if extracts are old and need to be refreshed
+        refreshExtracts(context)
 
-            /**
-             * Override function for onResponse callback of our http request. onResponse returns a
-             * Response object from okHTTP in json format through the Moshi converter passed in
-             * the retrofit object for us to parse the JSON. Once parsed data is set as a wikiExtract list.
-             */
-            override fun onResponse(call: Call<WikiTitlesJSONResponse>,
-                                    response: Response<WikiTitlesJSONResponse>?) {
-                // Build the titles query.
-                val titleQuery = buildTitlesQuery(response?.body())
-                // With the query titles built, send the call to get the extracts
-                getExtracts(titleQuery)
-            }
-
-            /**
-             * Override function for onFailure callback of our http request.
-             */
-            override fun onFailure(call: Call<WikiTitlesJSONResponse>, t: Throwable?) {
-                log?.warning("Titles Http request failed")
-            }
-        })
+        data.value = wikiDao.getWikiExtracts(context)
         // Return the live data object holding the list set by the getExtracts() onResponse.
         return data
+    }
+
+    private fun refreshExtracts(context: Context): Boolean {
+        val future: Future<Boolean> = executor.submit<Boolean> {
+            var isSaved = false
+            // running in a background thread
+            // Check to see if the extracts need to refresh to the daily articles
+            val today = wikiDao.isToday(context)
+
+            if (!today) {
+                // refresh the data
+                // execute the call, and check for error
+                val response = apiService.requestDailyTitles().execute()
+                if (response.isSuccessful) {
+                    // Update the database. The live data will automatically refresh.
+                    // Grab the response which is the Build the titles query.
+                    val titleQuery = buildTitlesQuery(response?.body())
+
+                    // With the query titles built, send the call to get the extracts
+                    isSaved = saveExtracts(context, titleQuery)
+                } else {
+                    // Error in web call.
+                    log?.warning("Titles Http request failed")
+                }
+            }
+            return@submit isSaved
+        }
+
+        return future.get()
     }
 
     /**
      * Repo function to launch an async through the retrofit Call and return the LiveData
      * object to which the results will be set in the onResponse callbacks.
      */
-    fun getExtracts(titles: String) {
-        // Call for the extracts query json
-        val extractsCall: Call<WikiExtractsJSONResponse> = apiService.requestExtracts(titles)
-        // Callback implementation
-        // Enqueue a call to an async.
-        extractsCall.enqueue(object : Callback<WikiExtractsJSONResponse> {
+    fun saveExtracts(context: Context, titles: String): Boolean {
+        var rows = -1
+        // execute the extracts query json call
+        val response = apiService.requestExtracts(titles).execute()
+        if (response.isSuccessful) {
+            // Grab the json response
+            val jsonResponse = response?.body()
+            // save the wiki extracts into the database
+            rows = wikiDao.saveWikiExtracts(context, jsonResponse?.query?.pages)
+        } else {
+            log?.warning("Extracts Http request failed")
+        }
 
-            /**
-             * Override function for onResponse callback of our http request. onResponse returns a
-             * Response object from okHTTP in String format through the Scalar converter passed in
-             * the retrofit object for us to parse the JSON. Once parsed data is set as a wikiExtract list.
-             */
-            override fun onResponse(call: Call<WikiExtractsJSONResponse>,
-                                    response: Response<WikiExtractsJSONResponse>?) {
-                // Grab the json response
-                val jsonResponse = response?.body()
-                // Set the value of the mutable live data to the return parsed list.
-                data.value = jsonResponse?.query?.pages?.toMutableList()
-            }
-
-            /**
-             * Override function for onFailure callback of our http request.
-             */
-            override fun onFailure(call: Call<WikiExtractsJSONResponse>, t: Throwable?) {
-                log?.warning("Extracts Http request failed")
-            }
-        })
+        return rows != -1
     }
 
     /**

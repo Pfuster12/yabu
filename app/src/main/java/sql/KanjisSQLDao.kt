@@ -14,7 +14,7 @@ import java.util.concurrent.Future
 
 /**
  * Class to contain helper methods to save internet loaded information into the
- * database for a persistent model
+ * kanjis database for a persistent model
  */
 class KanjisSQLDao {
 
@@ -23,9 +23,6 @@ class KanjisSQLDao {
             return KanjisSQLDao()
         }
     }
-
-    // init a mutable live data.
-    val data = MutableLiveData<Kanji>()
 
     // init an executor for cursor calls
     val executor: ExecutorService = Executors.newCachedThreadPool()

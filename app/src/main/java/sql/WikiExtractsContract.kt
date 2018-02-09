@@ -21,6 +21,7 @@ class WikiExtractsContract {
             val CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_NAME)
 
             val TABLE_NAME = "wikiextracts"
+            val COLUMN_DATE = "date"
             val COLUMN_PAGE_ID = "pageid"
             val COLUMN_TITLE = "title"
             val COLUMN_EXTRACT = "extract"

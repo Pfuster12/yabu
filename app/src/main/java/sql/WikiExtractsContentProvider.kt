@@ -6,6 +6,7 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.provider.BaseColumns
+import jsondataclasses.WikiExtract
 import sql.WikiExtractsContract.WikiExtractsEntry
 
 /**
@@ -46,6 +47,29 @@ class WikiExtractsContentProvider : ContentProvider() {
         }
 
         return Uri.withAppendedPath(uri, id.toString())
+    }
+
+    /**
+     * bulk insert function
+     */
+    override fun bulkInsert(uri: Uri?, values: Array<out ContentValues>?): Int {
+        val database = mDbHelper.writableDatabase
+
+        // begin a transaction for a bulk insert.
+        database.beginTransaction()
+        var rows = 0
+        try {
+            // Loop for every wiki extract
+            for (value in values!!) {
+                // insert into database
+                database.insert(WikiExtractsEntry.TABLE_NAME, null, value)
+                rows++
+            }
+        } finally {
+            database.endTransaction()
+        }
+
+        return rows
     }
 
     /**
