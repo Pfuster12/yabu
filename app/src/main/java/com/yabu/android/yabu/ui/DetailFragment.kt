@@ -268,6 +268,31 @@ class DetailFragment : BottomSheetDialogFragment() {
     }
 
     /**
+     * Helper fun to set the view model to the jisho view model and the jisho repo
+     * linked to that.
+     */
+    private fun setDefinitionViewModel(protoKanji: Pair<IntRange, Kanji>, rootView: View,
+                                       furiganaView: TextView) {
+        // Create the observer which updates the UI. Whenever the data changes, the new pojo list
+        // is fed through and the UI of the callout bubble can be updated.
+        val observer: Observer<Kanji> = Observer { kanji ->
+            // Check for null since addAll() accepts non-null
+            if (kanji != null) {
+                setCalloutBubble(rootView, Pair(protoKanji.first, kanji), furiganaView)
+            }
+        }
+
+        // Make the api call to grab the furigana for each word in the extract spannable
+        // Scan the extract text using the utils WordScanner class. Returns a list of
+        // pair values of Kanjis and index range.
+        mModel.getDefinitions(context, protoKanji.second)
+
+        // Observe the LiveData in the view model which will be set to the kanji index pairs,
+        // passing in the fragment as the LifecycleOwner and the observer created above.
+        mModel.kanji.observe(this@DetailFragment, observer)
+    }
+
+    /**
      * Helper fun to add the furigana text view at the right location above the kanji.
      */
     private fun setFuriganaView(kanji: Pair<IntRange, Kanji>, furiganaView: TextView) {
@@ -316,35 +341,14 @@ class DetailFragment : BottomSheetDialogFragment() {
         furigana.animate().alpha(1f).setListener(null).start()
     }
 
-    private fun setDefinitionViewModel(protoKanji: Pair<IntRange, Kanji>, rootView: View,
-                                       furiganaView: TextView) {
-        // Create the observer which updates the UI. Whenever the data changes, the new pojo list
-        // is fed through and the UI of the callout bubble can be updated.
-        val observer: Observer<Kanji> = Observer { kanji ->
-            // Check for null since addAll() accepts non-null
-            if (kanji != null) {
-                setCalloutBubble(rootView, protoKanji, kanji, furiganaView)
-            }
-        }
-
-        // Make the api call to grab the furigana for each word in the extract spannable
-        // Scan the extract text using the utils WordScanner class. Returns a list of
-        // pair values of Kanjis and index range.
-        mModel.getDefinitions(protoKanji.second)
-
-        // Observe the LiveData in the view model which will be set to the kanji index pairs,
-        // passing in the fragment as the LifecycleOwner and the observer created above.
-        mModel.kanji.observe(this@DetailFragment, observer)
-    }
-
-    private fun setCalloutBubble(rootView: View, protoKanji: Pair<IntRange, Kanji>, kanji: Kanji,
+    private fun setCalloutBubble(rootView: View, kanji: Pair<IntRange, Kanji>,
                                  furiganaView: TextView) {
         // Set the word title.
-        rootView.callout_bubble.callout_title.text = kanji.word
+        rootView.callout_bubble.callout_title.text = kanji.second.word
         // Set the reading.
-        rootView.callout_bubble.callout_reading.text = kanji.reading
+        rootView.callout_bubble.callout_reading.text = kanji.second.reading
         // Set the tags
-        setCalloutTags(kanji, rootView)
+        setCalloutTags(kanji.second, rootView)
 
         // Set an onclick to open the jisho url, and add an animation for the alpha
         rootView.callout_bubble.callout_details_link.alpha = 1.0f
@@ -359,7 +363,7 @@ class DetailFragment : BottomSheetDialogFragment() {
 
             }).start()
             // Set the url with an intent.
-            val webpage = Uri.parse(kanji.url)
+            val webpage = Uri.parse(kanji.second.url)
             val intent = Intent(Intent.ACTION_VIEW, webpage)
             if (intent.resolveActivity(context.packageManager) != null) {
                 startActivity(intent)
@@ -367,18 +371,18 @@ class DetailFragment : BottomSheetDialogFragment() {
         }
 
         // Set the definitions.
-        when (kanji.mDefinitions.size) {
+        when (kanji.second.mDefinitions.size) {
             1 -> {
                 // There is only one definition so set the first and hide the second.
-                val def = "1. " + kanji.mDefinitions[0]
+                val def = "1. " + kanji.second.mDefinitions[0]
                 rootView.callout_bubble.callout_definition_alone.text = def
                 // Set visibility
                 showOneDefinition(rootView)
             }
             2 -> {
                 // There are more than 1 so add the two definitions.
-                val def = "1. " + kanji.mDefinitions[0]
-                val def2 = "2. " + kanji.mDefinitions[1]
+                val def = "1. " + kanji.second.mDefinitions[0]
+                val def2 = "2. " + kanji.second.mDefinitions[1]
                 rootView.callout_bubble.callout_definition_alone.text = def
                 rootView.callout_bubble.callout_definition_1.text = def
                 rootView.callout_bubble.callout_definition_2.text = def2
@@ -395,7 +399,7 @@ class DetailFragment : BottomSheetDialogFragment() {
         }
 
         // Kanji was clicked with furigana so we show explanation
-        setCalloutBubblePosition(rootView, protoKanji, furiganaView)
+        setCalloutBubblePosition(rootView, kanji, furiganaView)
     }
 
     private fun setCalloutTags(kanji: Kanji, rootView: View) {
@@ -469,12 +473,6 @@ class DetailFragment : BottomSheetDialogFragment() {
      * Helper fun to set the callout bubble in the right place
      */
     private fun setCalloutBubblePosition(rootView: View, kanji: Pair<IntRange, Kanji>, furiganaView: TextView) {
-        // Set the middle bubble svg initially
-        rootView.callout_bubble.background = context.getDrawable(R.drawable.ic_callout_bubble_middle_shadow)
-        // Set the bottom bubble margin to be gone
-        rootView.callout_bubble.callout_title_margin.visibility = View.GONE
-        // Set the padding of the definitions to be the original if not bottom
-        setPaddingForBottomCallout(rootView,36f)
         // Set the padding bottom
         rootView.detail_padding_bottom.visibility = View.GONE
 
@@ -523,6 +521,11 @@ class DetailFragment : BottomSheetDialogFragment() {
      */
     private fun calculateCalloutBubbleOffset(rootView: View, furiganaView: TextView,
                                              kanji: Pair<IntRange, Kanji>) {
+        // Set the middle bubble svg initially
+        rootView.callout_bubble.background = context.getDrawable(R.drawable.ic_callout_bubble_middle_shadow)
+        setPaddingForBottomCallout(rootView,36f)
+        // Set the bottom bubble margin to be gone
+        rootView.callout_bubble.callout_title_margin.visibility = View.GONE
         // Get the text view bounds height.
         val bounds = Rect()
         furiganaView.paint.getTextBounds(kanji.second.reading, 0, kanji.second.reading.length, bounds)
@@ -565,6 +568,7 @@ class DetailFragment : BottomSheetDialogFragment() {
             } else {
                 rootView.callout_bubble.background =
                         context.getDrawable(R.drawable.ic_callout_bubble_start_shadow)
+                rootView.callout_bubble.callout_title_margin.visibility = View.GONE
             }
             // If it is from the start, set the x to the offset calculated.
             rootView.callout_bubble.x =  offsetPair.first
@@ -591,6 +595,7 @@ class DetailFragment : BottomSheetDialogFragment() {
             } else {
                 rootView.callout_bubble.background =
                         context.getDrawable(R.drawable.ic_callout_bubble_end_shadow)
+                rootView.callout_bubble.callout_title_margin.visibility = View.GONE
             }
             // Set the callout to be at the end of the text + some char widths to center it.
             rootView.callout_bubble.x =
@@ -762,7 +767,7 @@ class DetailFragment : BottomSheetDialogFragment() {
         val offsetX = startXCoordinates + ((endXCoordinates - startXCoordinates) / 2) - (furiganaWidth / 2.6)
 
         // Get the desired Y coordinate, a factor of the bounds height as a margin
-        val offsetY = startYCoordinates - furiganaHeight - (furiganaHeight / 1.8)
+        val offsetY = startYCoordinates - furiganaHeight - (furiganaHeight / 1.7)
 
         return Pair(offsetX.toFloat(), offsetY.toFloat())
     }

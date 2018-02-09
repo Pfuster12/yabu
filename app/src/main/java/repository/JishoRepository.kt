@@ -1,6 +1,8 @@
 package repository
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.content.Context
 import jsondataclasses.Kanji
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -9,6 +11,11 @@ import org.jsoup.select.Elements
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import sql.KanjisSQLDao
+import java.util.concurrent.Executor
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import java.util.logging.Logger
 
 /**
@@ -31,8 +38,14 @@ class JishoRepository {
     // Variable for the LiveData Kanji pair to be set in the response callback of Retrofit.
     val data: MutableLiveData<MutableList<Pair<IntRange, Kanji>>> = MutableLiveData()
 
-    // Variable for the LiveData Kanji returned from Jisho
+    // Variable for the LiveData Kanji pair to be set in the response callback of Retrofit.
     val wordData: MutableLiveData<Kanji> = MutableLiveData()
+
+    // Executor variable to execute in worker threads
+    private val executor: ExecutorService = Executors.newCachedThreadPool()
+
+    // SQL dao instance
+    private val kanjiDao = KanjisSQLDao.getInstance()
 
     /**
      * Repo fun to retrieve the word furigana from Jisho as retrieved from the extract
@@ -76,34 +89,58 @@ class JishoRepository {
      * Repo fun to retrieve the definition of a word from Jisho as touched by a user to show
      * the callout bubble definition.
      */
-    fun getDefinitions(protoKanji: Kanji): MutableLiveData<Kanji> {
+    fun getDefinitions(context: Context, protoKanji: Kanji): LiveData<Kanji> {
+        // see if there is an existing definition, if not do a retrofit call
+        val id = refreshDefinitions(context, protoKanji)
+
+        wordData.value = kanjiDao.getKanjiDefinition(context, protoKanji, id)
+        // return a live data directly from the database
+        return wordData
+    }
+
+    /**
+     * Helper function to get definitions if there isn't any.
+     */
+    private fun refreshDefinitions(context: Context, protoKanji: Kanji): Int {
         var keyword: String = protoKanji.word
-        // Check if it is one char to add the #kanji metatag
+
+        // Check if it is one char to add the #kanji meta-tag
         when (protoKanji.word.length == 1) {
             true -> keyword = protoKanji.word + "#kanji"
         }
-
+        // build the url
         val url = "http://jisho.org/search/" + keyword
-        // Get the call for the html string
-        val jishoCall: Call<String> = apiService.getDefinitionFromJisho(keyword)
 
-        // Enqueue a call to async
-        jishoCall.enqueue(object : Callback<String> {
-            override fun onResponse(call: Call<String>?, response: Response<String>?) {
-                // Grab the response body which is the string of the html.
-                val htmlString = response?.body()
+        val future: Future<Int> = executor.submit<Int> {
+            // running in a background thread
+            // Check if word has definition
+            val id = kanjiDao.hasDefinition(context, protoKanji)
+            var idNew = id.first
 
-                // Parse html for definitions
-                wordData.value = parseHtmlForDefinitions(protoKanji, htmlString, url)
+            // Check to see if there isn't a definition
+            if (!id.second) {
+                // refresh the data
+                // execute the call, and check for error
+                val response = apiService.getDefinitionFromJisho(keyword).execute()
+                if (response.isSuccessful) {
+                    // Update the database. The live data will automatically refresh.
+                    // Grab the response body which is the string of the html.
+                    val htmlString = response.body()
+
+                    // Parse html for definitions
+                    val kanji = parseHtmlForDefinitions(protoKanji, htmlString, url)
+
+                    idNew = kanjiDao.updateKanjiDefinition(context, kanji, id.first)
+                } else {
+                    // Error in web call.
+                    log?.warning("Jisho definition Http request failed.")
+                }
             }
 
-            override fun onFailure(call: Call<String>?, t: Throwable?) {
-                log?.warning("Jisho Definition Http request failed.")
-            }
+            return@submit idNew
+        }
 
-        })
-
-        return wordData
+        return future.get()
     }
 
     /**

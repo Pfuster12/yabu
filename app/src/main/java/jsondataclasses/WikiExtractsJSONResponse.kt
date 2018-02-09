@@ -19,7 +19,7 @@ data class WikiExtractsJSONQueryObject(val pages: List<WikiExtract>)
  * text into an object.
  */
 @Parcel
-data class WikiExtract public @ParcelConstructor constructor(public val pageId: Int?,
+data class WikiExtract @ParcelConstructor public constructor(public val pageId: Int?,
                                                       public val title: String?,
                                                       public val extract: String?,
                                                       public val thumbnail: WikiThumbnail?) // Parameters of the json result to hold data.

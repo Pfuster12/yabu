@@ -11,7 +11,7 @@ class KanjisContract {
     companion object {
         val CONTENT_AUTHORITY = "com.yabu.android.yabu"
         val BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY)
-        val PATH_NAME = "kanji"
+        val PATH_NAME = "kanjis"
     }
 
     // Columns inner class for entries in Kanji tables.
@@ -29,6 +29,8 @@ class KanjisContract {
             val COLUMN_DEFINITION_1 = "definition_1"
             val COLUMN_DEFINITION_2 = "definition_2"
             val COLUMN_URL = "url"
+            val COLUMN_IS_REVIEW = "review"
+            val COLUMN_RANGE = "range"
         }
 
     }

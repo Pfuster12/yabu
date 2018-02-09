@@ -29,6 +29,11 @@
             android:authorities="com.yabu.android.yabu"
             android:name="sql.KanjisContentProvider"
             android:exported="false"/>
+
+        <provider
+            android:authorities="com.yabu.android.yabu"
+            android:name="sql.WikiExtractsContentProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

@@ -6,27 +6,26 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.provider.BaseColumns
-import sql.KanjisContract.KanjisEntry
+import sql.WikiExtractsContract.WikiExtractsEntry
 
 /**
- * Content Provider to access the Kanjis database. The provider gives a second layer of
+ * Content Provider to access the Wiki extracts database. The provider gives a second layer of
  * abstraction and safety to access the database.
  */
-class KanjisContentProvider : ContentProvider() {
-
+class WikiExtractsContentProvider : ContentProvider() {
     // Global db helper var
-    private lateinit var mDbHelper: KanjisDbHelper
+    private lateinit var mDbHelper: WikiExtractsDbHelper
 
     private val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
-    private val KANJIS_ALL_ID = 100
-    private val KANJIS_SINGLE_ID = 101
+    private val WIKI_ALL_ID = 100
+    private val WIKI_SINGLE_ID = 101
 
     // Add the Uri for all the table and a single Id to the matcher
-   private fun setUriMatcher() {
-        sUriMatcher.addURI(KanjisContract.CONTENT_AUTHORITY,
-                KanjisContract.KanjisEntry.TABLE_NAME, KANJIS_ALL_ID)
-        sUriMatcher.addURI(KanjisContract.CONTENT_AUTHORITY,
-                KanjisContract.KanjisEntry.TABLE_NAME + "/#", KANJIS_SINGLE_ID)
+    private fun setUriMatcher() {
+        sUriMatcher.addURI(WikiExtractsContract.CONTENT_AUTHORITY,
+                WikiExtractsEntry.TABLE_NAME, WIKI_ALL_ID)
+        sUriMatcher.addURI(WikiExtractsContract.CONTENT_AUTHORITY,
+                WikiExtractsEntry.TABLE_NAME + "/#", WIKI_SINGLE_ID)
     }
 
     /**
@@ -37,10 +36,10 @@ class KanjisContentProvider : ContentProvider() {
         var id: Long = 0
 
         when (sUriMatcher.match(uri)) {
-            KANJIS_ALL_ID -> {
-                id = database.insert(KanjisEntry.TABLE_NAME, null, values)
+            WIKI_ALL_ID -> {
+                id = database.insert(WikiExtractsEntry.TABLE_NAME, null, values)
             }
-            KANJIS_SINGLE_ID -> {
+            WIKI_SINGLE_ID -> {
                 // Do nothing
             }
             else -> throw IllegalArgumentException("Uri not recognised")
@@ -60,18 +59,18 @@ class KanjisContentProvider : ContentProvider() {
 
         // Match the uri to find which corresponds to
         when (sUriMatcher.match(uri)) {
-            // All the entries
-            KANJIS_ALL_ID -> {
-                cursor = database.query(KanjisEntry.TABLE_NAME, projection,
+        // All the entries
+            WIKI_ALL_ID -> {
+                cursor = database.query(WikiExtractsEntry.TABLE_NAME, projection,
                         selection,
                         selectionArgs,
                         null,
                         null,
                         null)
             }
-            // One entry
-            KANJIS_SINGLE_ID -> {
-                cursor = database.query(KanjisEntry.TABLE_NAME, projection,
+        // One entry
+            WIKI_SINGLE_ID -> {
+                cursor = database.query(WikiExtractsEntry.TABLE_NAME, projection,
                         selection,
                         selectionArgs,
                         null,
@@ -89,7 +88,7 @@ class KanjisContentProvider : ContentProvider() {
      */
     override fun onCreate(): Boolean {
         setUriMatcher()
-        mDbHelper = KanjisDbHelper(context)
+        mDbHelper = WikiExtractsDbHelper(context)
         return true
     }
 
@@ -102,14 +101,14 @@ class KanjisContentProvider : ContentProvider() {
         var id = 0
 
         when (sUriMatcher.match(uri)) {
-            KANJIS_ALL_ID -> {
+            WIKI_ALL_ID -> {
                 // Do nothing
             }
-            KANJIS_SINGLE_ID -> {
+            WIKI_SINGLE_ID -> {
                 val whereClause = BaseColumns._ID + " = ?"
                 val whereArgs = arrayOf(uri?.lastPathSegment)
 
-                id = database.update(KanjisEntry.TABLE_NAME, values, whereClause, whereArgs)
+                id = database.update(WikiExtractsEntry.TABLE_NAME, values, whereClause, whereArgs)
             }
         }
 
@@ -124,15 +123,15 @@ class KanjisContentProvider : ContentProvider() {
         var id = 0
 
         when (sUriMatcher.match(uri)) {
-            KANJIS_ALL_ID -> {
-                id = database.delete(KanjisEntry.TABLE_NAME, selection, null)
+            WIKI_ALL_ID -> {
+                id = database.delete(WikiExtractsEntry.TABLE_NAME, selection, null)
             }
-            KANJIS_SINGLE_ID -> {
+            WIKI_SINGLE_ID -> {
                 val sel = BaseColumns._ID + " = ?"
                 val selArgs = arrayOf(uri?.lastPathSegment)
 
                 // Delete the entry
-                id = database.delete(KanjisEntry.TABLE_NAME, sel, selArgs)
+                id = database.delete(WikiExtractsEntry.TABLE_NAME, sel, selArgs)
             }
             else -> throw IllegalArgumentException("Uri not recognised")
         }
@@ -145,15 +144,15 @@ class KanjisContentProvider : ContentProvider() {
      */
     override fun getType(uri: Uri?): String {
         when (sUriMatcher.match(uri)) {
-            KANJIS_ALL_ID -> {
+            WIKI_ALL_ID -> {
                 return "vnd.android.cursor.dir/" +
                         "vnd.com.example.KanjisContentProvider." +
-                        KanjisContract.KanjisEntry.TABLE_NAME
+                        WikiExtractsEntry.TABLE_NAME
             }
-            KANJIS_SINGLE_ID -> {
+            WIKI_SINGLE_ID -> {
                 return "vnd.android.cursor.item/" +
                         "vnd.com.example.KanjisContentProvider." +
-                        KanjisContract.KanjisEntry.TABLE_NAME
+                        WikiExtractsEntry.TABLE_NAME
             }
             else -> throw IllegalArgumentException("Uri not recognised")
         }
