@@ -3,6 +3,7 @@
     android:id="@+id/detail_fragment_parent_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorBackground"
     xmlns:tools="http://schemas.android.com/tools">
 
     <android.support.design.widget.AppBarLayout
@@ -90,6 +91,24 @@
                     app:layout_constraintBottom_toBottomOf="parent">
 
                     <TextView
+                        android:id="@+id/wiki_article_heading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/article_heading_detail"
+                        style="@style/PoweredJaStyle"
+                        android:paddingTop="20dp"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="16dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/color700Grey"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="48dp"/>
+
+                    <TextView
                         android:id="@+id/detail_title"
                         android:padding="16dp"
                         android:layout_width="match_parent"
@@ -119,6 +138,20 @@
             <!-- this sits at the bottom of the ScrollView,
             getting pushed out of view if the ScrollView's
             content is tall enough -->
+            <TextView
+                android:id="@+id/read_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/read_that_button"
+                style="@style/StartUpDescriptionTextStyle"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:layout_gravity="center"
+                android:background="@drawable/tag_stroke"/>
+
             <ImageView
                 android:contentDescription="@string/thumbnail_content_description"
                 android:layout_width="match_parent"

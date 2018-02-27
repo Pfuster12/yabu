@@ -14,6 +14,8 @@ class KanjisDbHelper(context: Context) : SQLiteOpenHelper(context, "kanjis.db", 
     private val SQL_CREATE_ENTRIES = "CREATE TABLE " + KanjisEntry.TABLE_NAME + " (" +
             BaseColumns._ID + " INTEGER PRIMARY KEY," +
             KanjisEntry.COLUMN_KANJI_WORD + " TEXT NOT NULL," +
+            KanjisEntry.COLUMN_DATE + " INTEGER NOT NULL," +
+            KanjisEntry.COLUMN_SOURCE + " TEXT NOT NULL," +
             KanjisEntry.COLUMN_KANJI_READING + " TEXT," +
             KanjisEntry.COLUMN_KANJI_PARTS_OF_SPEECH + " TEXT," +
             // Boolean values are 0 (false) and 1 (true).

@@ -3,14 +3,13 @@ package repository
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.content.Context
+import android.net.ConnectivityManager
 import jsondataclasses.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import sql.WikiExtractsSQLDao
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
+import java.util.concurrent.*
 import java.util.logging.Logger
 import kotlin.math.roundToInt
 
@@ -27,8 +26,12 @@ class WikiExtractRepository {
 
     companion object {
         val log: Logger? = Logger.getLogger(WikiExtractRepository::class.java.simpleName)
+
+        // Executor variable to execute in worker threads
+        lateinit var executor: ExecutorService
         // Instance getter helper function.
         fun getInstance(): WikiExtractRepository {
+            executor = Executors.newCachedThreadPool()
             return WikiExtractRepository()
         }
     }
@@ -38,9 +41,6 @@ class WikiExtractRepository {
 
     // Variable for the LiveData object to be set in the response callback of Retrofit.
     val data: MutableLiveData<MutableList<WikiExtract>> = MutableLiveData()
-
-    // Executor variable to execute in worker threads
-    private val executor: ExecutorService = Executors.newCachedThreadPool()
 
     private val wikiDao = WikiExtractsSQLDao.getInstance()
 
@@ -58,44 +58,57 @@ class WikiExtractRepository {
         return data
     }
 
-    private fun refreshExtracts(context: Context): Boolean {
-        val future: Future<Boolean> = executor.submit<Boolean> {
-            var isSaved = false
-            // running in a background thread
-            // Check to see if the extracts need to refresh to the daily articles
-            val today = wikiDao.isToday(context)
+    private fun refreshExtracts(context: Context): Boolean? {
+        var future: Future<Boolean>? = null
+        // execute worker thread
+        try {
+            future = executor.submit<Boolean> {
+                var isSaved = false
+                // running in a background thread
+                // Check to see if the extracts need to refresh to the daily articles
+                val isToday = wikiDao.isToday(context)
 
-            if (!today) {
-                // refresh the data
-                // execute the call, and check for error
-                val response = apiService.requestDailyTitles().execute()
-                if (response.isSuccessful) {
-                    // Update the database. The live data will automatically refresh.
-                    // Grab the response which is the Build the titles query.
-                    val titleQuery = buildTitlesQuery(response?.body())
+                if (!isToday && isConnected(context)) {
+                    // refresh the data
+                    // execute the call, and check for error
+                    val response = apiService.requestDailyTitles().execute()
+                    if (response.isSuccessful) {
+                        // Update the database. The live data will automatically refresh.
+                        // Grab the response which is the Build the titles query.
+                        val titleQuery = buildTitlesQuery(response?.body())
 
-                    // With the query titles built, send the call to get the extracts
-                    isSaved = saveExtracts(context, titleQuery)
-                } else {
-                    // Error in web call.
-                    log?.warning("Titles Http request failed")
+                        // With the query titles built, send the call to get the extracts
+                        isSaved = saveExtracts(context, titleQuery)
+                    } else {
+                        // Error in web call.
+                        log?.warning("Titles Http request failed")
+                    }
                 }
+                return@submit isSaved
             }
-            return@submit isSaved
+        } catch (e: RejectedExecutionException) {
+            Logger.getLogger("JishoRepo").warning(e.toString())
+
         }
 
-        return future.get()
+        return try {
+            future?.get(10, TimeUnit.SECONDS)
+        } catch (e: Exception) {
+            Logger.getLogger("JishoRepo").warning(e.toString())
+            false
+        }
     }
 
     /**
      * Repo function to launch an async through the retrofit Call and return the LiveData
      * object to which the results will be set in the onResponse callbacks.
      */
-    fun saveExtracts(context: Context, titles: String): Boolean {
+    private fun saveExtracts(context: Context, titles: String): Boolean {
         var rows = -1
         // execute the extracts query json call
         val response = apiService.requestExtracts(titles).execute()
         if (response.isSuccessful) {
+            wikiDao.deleteYesterdayEntries(context)
             // Grab the json response
             val jsonResponse = response?.body()
             // save the wiki extracts into the database
@@ -105,6 +118,10 @@ class WikiExtractRepository {
         }
 
         return rows != -1
+    }
+
+    fun isRead(context: Context, wikiExtract: WikiExtract?): Boolean? {
+        return wikiDao.isRead(context, wikiExtract)
     }
 
     /**
@@ -165,5 +182,14 @@ class WikiExtractRepository {
 
         // Return the query string
         return buildTitleQuery
+    }
+
+    /**
+     * Helper fun to check internet connection whether wi-fi or mobile
+     */
+    private fun isConnected(context: Context): Boolean {
+        val connMgr = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val networkInfo = connMgr?.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
     }
 }

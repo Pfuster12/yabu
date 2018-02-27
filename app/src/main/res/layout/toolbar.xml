@@ -15,4 +15,14 @@
         tools:text="@string/reading_page_title"
         android:layout_gravity="center"
         style="@style/ToolbarTitleStyle"/>
+
+    <ImageView
+        android:id="@+id/night_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        tools:text="@string/reading_page_title"
+        android:layout_gravity="end"
+        android:src="@drawable/night_mode_button"
+        android:tint="@color/color100Grey"/>
 </android.support.v7.widget.Toolbar>

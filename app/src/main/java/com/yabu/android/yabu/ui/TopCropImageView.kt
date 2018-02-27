@@ -31,11 +31,13 @@ class TopCropImageView : ImageView {
 
         var scaleFactor = 1f
 
-        if (frameWidth > drawable.intrinsicWidth || frameHeight > drawable.intrinsicHeight) {
-            val fitXScale = frameWidth / drawable.intrinsicWidth.toFloat()
-            val fitYScale = frameHeight / drawable.intrinsicHeight.toFloat()
+        if (drawable != null) {
+            if (frameWidth > drawable.intrinsicWidth || frameHeight > drawable.intrinsicHeight) {
+                val fitXScale = frameWidth / drawable.intrinsicWidth.toFloat()
+                val fitYScale = frameHeight / drawable.intrinsicHeight.toFloat()
 
-            scaleFactor = Math.max(fitXScale, fitYScale)
+                scaleFactor = Math.max(fitXScale, fitYScale)
+            }
         }
 
         val matrix = imageMatrix

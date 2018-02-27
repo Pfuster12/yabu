@@ -7,7 +7,6 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.BaseColumns
 import sql.KanjisContract.KanjisEntry
-
 /**
  * Content Provider to access the Kanjis database. The provider gives a second layer of
  * abstraction and safety to access the database.
@@ -16,7 +15,7 @@ class KanjisContentProvider : ContentProvider() {
 
     // Global db helper var
     private lateinit var mDbHelper: KanjisDbHelper
-
+    // Global db helper var
     private val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
     private val KANJIS_ALL_ID = 100
     private val KANJIS_SINGLE_ID = 101
@@ -33,11 +32,11 @@ class KanjisContentProvider : ContentProvider() {
      * Insert function.
      */
     override fun insert(uri: Uri?, values: ContentValues?): Uri {
-        val database = mDbHelper.writableDatabase
         var id: Long = 0
 
         when (sUriMatcher.match(uri)) {
             KANJIS_ALL_ID -> {
+                val database = mDbHelper.writableDatabase
                 id = database.insert(KanjisEntry.TABLE_NAME, null, values)
             }
             KANJIS_SINGLE_ID -> {
@@ -49,19 +48,40 @@ class KanjisContentProvider : ContentProvider() {
         return Uri.withAppendedPath(uri, id.toString())
     }
 
+    override fun bulkInsert(uri: Uri?, values: Array<out ContentValues>?): Int {
+        val database = mDbHelper.writableDatabase
+
+        // begin a transaction for a bulk insert.
+        database.beginTransaction()
+        var rows = 0
+        try {
+            // Loop for every wiki extract
+            for (value in values!!) {
+                // insert into database
+                database.insert(KanjisEntry.TABLE_NAME, null, value)
+                rows++
+            }
+            database.setTransactionSuccessful()
+        } finally {
+            database.endTransaction()
+        }
+
+        return rows
+    }
+
     /**
      * Query function for the content provider. Takes in all columns to query
      */
     override fun query(uri: Uri?, projection: Array<out String>?, selection: String?,
                        selectionArgs: Array<out String>?, sortOrder: String?): Cursor {
-        // Get a readable db to query
-        val database = mDbHelper.readableDatabase
         val cursor: Cursor
 
         // Match the uri to find which corresponds to
         when (sUriMatcher.match(uri)) {
             // All the entries
             KANJIS_ALL_ID -> {
+                // Get a readable db to query
+                val database = mDbHelper.readableDatabase
                 cursor = database.query(KanjisEntry.TABLE_NAME, projection,
                         selection,
                         selectionArgs,
@@ -71,6 +91,8 @@ class KanjisContentProvider : ContentProvider() {
             }
             // One entry
             KANJIS_SINGLE_ID -> {
+                // Get a readable db to query
+                val database = mDbHelper.readableDatabase
                 cursor = database.query(KanjisEntry.TABLE_NAME, projection,
                         selection,
                         selectionArgs,
@@ -128,11 +150,8 @@ class KanjisContentProvider : ContentProvider() {
                 id = database.delete(KanjisEntry.TABLE_NAME, selection, null)
             }
             KANJIS_SINGLE_ID -> {
-                val sel = BaseColumns._ID + " = ?"
-                val selArgs = arrayOf(uri?.lastPathSegment)
-
                 // Delete the entry
-                id = database.delete(KanjisEntry.TABLE_NAME, sel, selArgs)
+                id = database.delete(KanjisEntry.TABLE_NAME, selection, selectionArgs)
             }
             else -> throw IllegalArgumentException("Uri not recognised")
         }

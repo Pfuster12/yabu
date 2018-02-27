@@ -9,7 +9,7 @@ import android.provider.BaseColumns
 class WikiExtractsContract {
 
     companion object {
-        val CONTENT_AUTHORITY = "com.yabu.android.yabu"
+        val CONTENT_AUTHORITY = "com.yabu.android.yabu.wiki"
         val BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY)
         val PATH_NAME = "wikiextracts"
     }
@@ -21,6 +21,7 @@ class WikiExtractsContract {
             val CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_NAME)
 
             val TABLE_NAME = "wikiextracts"
+            val COLUMN_IS_READ = "isread"
             val COLUMN_DATE = "date"
             val COLUMN_PAGE_ID = "pageid"
             val COLUMN_TITLE = "title"

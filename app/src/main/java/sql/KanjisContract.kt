@@ -21,6 +21,8 @@ class KanjisContract {
             val CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_NAME)
 
             val TABLE_NAME = "kanjis"
+            val COLUMN_SOURCE = "source"
+            val COLUMN_DATE = "date"
             val COLUMN_KANJI_WORD = "word"
             val COLUMN_KANJI_READING = "reading"
             val COLUMN_KANJI_PARTS_OF_SPEECH = "parts_of_speech"

@@ -10,7 +10,13 @@
         android:id="@+id/layout_toolbar"
         layout="@layout/toolbar" />
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/reading_recycler_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -19,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <include
             android:id="@+id/reading_no_connection"
@@ -31,4 +37,5 @@
             layout="@layout/no_connection"
             android:visibility="gone"/>
     </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

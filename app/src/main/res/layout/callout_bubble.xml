@@ -47,6 +47,15 @@
         android:layout_gravity="end"
         android:paddingBottom="8dp">
 
+        <ImageView
+            android:id="@+id/callout_review_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="12dp"
+            android:paddingBottom="4dp"
+            android:src="@drawable/star_button"
+            android:tint="@color/color500Grey"/>
+
         <TextView
             android:id="@+id/callout_common_tag"
             android:layout_width="wrap_content"

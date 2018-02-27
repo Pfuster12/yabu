@@ -28,6 +28,8 @@
         android:layout_height="wrap_content"
         android:text="@string/no_connection_big"
         style="@style/NoConnectionBigTextStyle"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:paddingTop="4dp"
         android:paddingBottom="16dp"
         android:gravity="center" />

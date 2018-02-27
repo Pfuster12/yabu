@@ -6,7 +6,11 @@
     <color name="colorAccent">#17D68A</color>
 
     <!-- Background color -->
-    <color name="colorLightBackground">@android:color/background_light</color>
+    <color name="colorBackground">@android:color/background_light</color>
+    <!-- Background color -->
+    <color name="colorTextWhite">@android:color/background_light</color>
+    <color name="colorTabUnselected">@color/color100Grey</color>
+
 
     <!-- Background color -->
     <color name="colorJLPTN1">#cc0000</color>

@@ -13,7 +13,8 @@ class WikiExtractsDbHelper(context: Context) : SQLiteOpenHelper(context, "wikiex
 
     private val SQL_CREATE_ENTRIES = "CREATE TABLE " + WikiExtractsEntry.TABLE_NAME + " (" +
             BaseColumns._ID + " INTEGER PRIMARY KEY," +
-            WikiExtractsEntry.COLUMN_PAGE_ID + " INTEGER NOT NULL," +
+            WikiExtractsEntry.COLUMN_IS_READ + " INTEGER," +
+            WikiExtractsEntry.COLUMN_PAGE_ID + " INTEGER," +
             WikiExtractsEntry.COLUMN_DATE + " INTEGER," +
             WikiExtractsEntry.COLUMN_TITLE + " TEXT NOT NULL," +
             WikiExtractsEntry.COLUMN_EXTRACT + " TEXT," +

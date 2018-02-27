@@ -4,8 +4,8 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import android.content.Context
 import jsondataclasses.Kanji
+import jsondataclasses.WikiExtract
 import repository.JishoRepository
-import utils.WordScanner
 
 /**
  * ViewModel class to keep all data related to the Jisho words separating the function from
@@ -17,19 +17,16 @@ class JishoViewModel : ViewModel() {
     // LiveData holds the app data in a lifecycle conscious manner.
     lateinit var kanjis: LiveData<MutableList<Pair<IntRange, Kanji>>>
 
-    lateinit var kanji: LiveData<Kanji>
+    lateinit var kanji: LiveData<Pair<Int?, Kanji?>>
 
     private val jishoRepo = JishoRepository.getInstance()
 
     /**
      * Method handling the async load to expose kanji and furigana data to the ui that calls it.
      */
-    fun loadKanjis(extract: String?) {
-        // Build the query string for the api call
-        val queryString = WordScanner.getUtils().buildJishoQuery(extract)
-
+    fun loadKanjis(context: Context, wikiExtract: WikiExtract?) {
         // Set the live data object
-        kanjis = jishoRepo.getWords(queryString, extract)
+        kanjis = jishoRepo.getWords(context, wikiExtract)
     }
 
     /**

@@ -8,7 +8,7 @@
     <!-- Start up Sign Up -->
     <string name="start_up_sign_up">Sign up</string>
     <!-- Start up Continue without Sign Up -->
-    <string name="start_up_continue_no_sign">Or continue without signing&#8230;</string>
+    <string name="start_up_continue_no_sign">Click here to continue&#8230;</string>
 
     <!-- Main activity -->
 
@@ -22,6 +22,11 @@
     <string name="no_connection_detail">Looks like there is no Internet Connection. Try turning it on and swipe to refresh.</string>
 
     <!-- Detail fragment -->
+
+    <!-- Powered by text -->
+    <string name="read_that_button">I read that!</string>
+    <!-- Powered by text -->
+    <string name="read_that_button_false">Oops! I did not read that.</string>
 
     <!-- Main screens tool bar titles -->
     <string name="no_definition">No definition available</string>
@@ -53,7 +58,47 @@
     <string name="JLPTN5" translatable="false">JLPT N5</string>
 
     <!-- Jisho link text callout-->
-    <string name="callout_link_details"><u>Details</u></string>
+    <string name="callout_link_details"><u>more&#8230;</u></string>
+
+    <!-- Definition 1 placeholder text -->
+    <string name="definition_1_placeholder">1. %1$s</string>
+
+    <!-- Definition 2 placeholder text -->
+    <string name="definition_2_placeholder">2. %1$s</string>
+
+    <!-- Definition 2 placeholder text -->
+    <string name="undo_snackbar">UNDO</string>
+
+    <!-- Definition 2 placeholder text -->
+    <string name="snackbar_word_placeholder">%1$s removed.</string>
+
+    <!-- Review Words Fragment -->
+
+    <!-- Save words text -->
+    <string name="footer_save_words">Save review words here</string>
+
+    <!-- Save words text -->
+    <string name="no_words_save_words">Save review words to study again.</string>
+
+    <!-- Save words text -->
+    <string name="no_words_big">There doesn\'t seem to be anything here&#8230;</string>
+
+    <!-- USer footer -->
+    <string name="footer_user_stats">User stats. Keep breaking barriers!</string>
+
+    <!-- Articles read title stats -->
+    <string name="article_user_stats_title">Wikis read this week</string>
+
+
+    <!-- Articles read title stats -->
+    <string name="article_heading_detail">Wiki Article</string>
+
+    <!-- Pie chart review words -->
+    <string name="review_user_stats_title">Review words overview</string>
+
+    <!-- Widget -->
+    <!-- Content description for no connection -->
+    <string name="empy_data_widget">No words to display</string>
 
     <!-- Content Descriptions -->
 

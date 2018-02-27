@@ -1,15 +1,25 @@
 package com.yabu.android.yabu.ui
 
+import android.app.UiModeManager
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.ViewPager
 import com.yabu.android.yabu.R
 // Import the layout to avoid findView boilerplate
 import  kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+
 
 /**
  * Main Activity holding ViewPager tabs of the main 3 fragments. This is the launch activity unless
@@ -21,6 +31,23 @@ class MainActivity : AppCompatActivity() {
     // when the Main Activity is shown. Index 1 is the Reading Tab.
     private val primaryTab: Int = 1
 
+    // late init a shared prefs var to check start up screen
+    private lateinit var mPrefs: SharedPreferences
+
+    companion object {
+        // Executor variable to execute in worker threads
+        lateinit var executor: ExecutorService
+
+        // Preference key for night mode
+        val NIGHT_MODE_KEY = "com.yabu.android.yabu.NIGHT_MODE"
+    }
+
+    lateinit var mListener: OnPageSelectedListener
+
+    interface OnPageSelectedListener {
+        fun onPageSelectedReview(position: Int) {}
+    }
+
     /**
      * Override function for the onCreate lifecycle of the activity.
      */
@@ -28,8 +55,58 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // init a worker thread for the fragments
+        // Executor variable to execute in worker threads
+        executor = Executors.newCachedThreadPool()
+
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
+        checkNightMode()
+
+        checkStartUpScreen()
+
         // Setup the TabLayout with the ViewPager with helper function.
         setupTabWithViewPager()
+    }
+
+    /**
+     * check whether night mode is set and change the app.
+     */
+    private fun checkNightMode(): Boolean {
+        // get boolean from preferences, if not found give false
+        val isNightMode = mPrefs.getBoolean(MainActivity.NIGHT_MODE_KEY, false)
+
+        // check if it has been shown
+        if (isNightMode) {
+            // if it is set the night mode
+            val uiManager = this.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+            uiManager.nightMode = UiModeManager.MODE_NIGHT_YES
+        } else {
+            // if it isnt set the night mode off
+            val uiManager = this.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+            uiManager.nightMode = UiModeManager.MODE_NIGHT_NO
+        }
+
+        return isNightMode
+    }
+
+    /**
+     * Function to check for start up screen in shared preferences and show.
+     */
+    private fun checkStartUpScreen() {
+        // get boolean from preferences, if not found give false
+        val startUpScreenShown = mPrefs.getBoolean(StartUpActivity.START_UP_KEY, false)
+
+        // check if it has been shown
+        if (!startUpScreenShown) {
+            // if not, show start up activity
+            val intent = Intent(this, StartUpActivity::class.java)
+            // start the activity
+            startActivity(intent)
+            // set the pref to shown to true
+            val editor = mPrefs.edit()
+            editor.putBoolean(StartUpActivity.START_UP_KEY, true)
+            editor.apply()
+        }
     }
 
     /**
@@ -37,8 +114,9 @@ class MainActivity : AppCompatActivity() {
      * and sets a tab selected listener to change icon colours to the primary color.
      */
     private fun setupTabWithViewPager() {
+        val adapter = TabPagerAdapter(supportFragmentManager)
         // Set the adapter to the view pager in the xml layout, passing the support fragment manager.
-        pager.adapter = TabPagerAdapter(supportFragmentManager)
+        pager.adapter = adapter
         // Set the Tab layout with the ViewPager. tab_layout comes from the kotlinx import which
         // binds the views from the imported layout.
         tab_layout.setupWithViewPager(pager)
@@ -70,11 +148,17 @@ class MainActivity : AppCompatActivity() {
             override fun onTabUnselected(tab: TabLayout.Tab?) {
                 // Set the icon color to the primary color on selection
                 tab?.icon?.setTint(ContextCompat
-                        .getColor(this@MainActivity, R.color.color100Grey))
+                        .getColor(this@MainActivity, R.color.colorTabUnselected))
             }
         }
         // Set the tab listener
         tab_layout.addOnTabSelectedListener(tabListener)
+
+        pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+            override fun onPageSelected(position: Int) {
+                mListener.onPageSelectedReview(position)
+            }
+        })
     }
 
     /**
@@ -88,7 +172,7 @@ class MainActivity : AppCompatActivity() {
                 0 -> {
                     val tab: TabLayout.Tab? = tabLayout.getTabAt(0)
                     tab?.setIcon(R.drawable.ic_person_black_24dp)
-                    tab?.icon?.setTint(ContextCompat.getColor(this, R.color.color100Grey))
+                    tab?.icon?.setTint(ContextCompat.getColor(this, R.color.colorTabUnselected))
                 }
             // In the Reading tab set the reading icon
                 1 -> {
@@ -100,7 +184,7 @@ class MainActivity : AppCompatActivity() {
                 2 -> {
                     val tab: TabLayout.Tab? = tabLayout.getTabAt(2)
                     tab?.setIcon(R.drawable.ic_folder_special_black_24dp)
-                    tab?.icon?.setTint(ContextCompat.getColor(this, R.color.color100Grey))
+                    tab?.icon?.setTint(ContextCompat.getColor(this, R.color.colorTabUnselected))
                 }
             }
         }
@@ -141,5 +225,20 @@ class MainActivity : AppCompatActivity() {
         override fun getCount(): Int {
             return fragmentCount
         }
+    }
+
+    /**
+     * Shutdown worker threads appropriately
+     */
+    override fun onDestroy() {
+        executor.shutdown()
+        try {
+            if (!executor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                executor.shutdownNow()
+            }
+        } catch (e: InterruptedException) {
+            executor.shutdownNow()
+        }
+        super.onDestroy()
     }
 }

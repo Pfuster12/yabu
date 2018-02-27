@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
     </style>
 
     <!-- Modal dialog styles -->
@@ -29,7 +30,7 @@
     <!-- Toolbar theme. -->
     <style name="ToolbarTheme" parent="Widget.AppCompat.Toolbar">
         <!-- Customize your theme here. -->
-        <item name="android:background">@color/colorLightBackground</item>
+        <item name="android:background">@color/colorBackground</item>
         <item name="android:contentInsetStart">0dp</item>
         <item name="android:titleTextAppearance">@style/ToolbarTitleStyle</item>
         <item name="android:elevation">4dp</item>
@@ -106,7 +107,7 @@
     <!--JLPT text-->
     <style name="TagStyle" parent="Base.TextAppearance.AppCompat.Caption">
         <item name="android:letterSpacing">0.05</item>
-        <item name="android:textColor">@color/colorLightBackground</item>
+        <item name="android:textColor">@color/colorTextWhite</item>
         <item name="android:textStyle">bold</item>
         <item name="android:paddingStart">4dp</item>
         <item name="android:paddingEnd">4dp</item>
@@ -132,7 +133,7 @@
 
     <!-- No connection text style -->
     <style name="NoConnectionBigTextStyle">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:letterSpacing">0.05</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/color100Grey</item>

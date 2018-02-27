@@ -62,7 +62,8 @@ class WordScanner {
             val iterationCodePoint = 12293
         }
 
-        // Unicode code-point range for punctuation of CJK unicode chars
+        // For possible use in future.
+    /*    // Unicode code-point range for punctuation of CJK unicode chars
         val punctuationRange = object {
             // Start of the range
             val startCodePoint = 12288
@@ -92,7 +93,7 @@ class WordScanner {
             val startCodePoint = 12784
             // End of the range
             val endCodePoint = 12799
-        }
+        }*/
 
         // init an empty pair list
         val pairIndexWordList = mutableListOf<Pair<IntRange, String>>()

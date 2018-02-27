@@ -18,8 +18,8 @@ import jsondataclasses.WikiExtract
  * Recycler View custom adapter with a header, footer and item view holder. Passes the adapter
  * data, the activity context and the listener callback to the activity.
  */
-class RecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtract>,
-                          private val context: Context, private val listener: (extract: WikiExtract) -> Unit)
+class ReadingRecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtract>,
+                                 private val context: Context, private val listener: (extract: WikiExtract) -> Unit)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     /*

@@ -65,6 +65,7 @@ class WikiExtractsContentProvider : ContentProvider() {
                 database.insert(WikiExtractsEntry.TABLE_NAME, null, value)
                 rows++
             }
+            database.setTransactionSuccessful()
         } finally {
             database.endTransaction()
         }

@@ -6,18 +6,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <View
-        android:id="@+id/grey_100_circle"
+        android:id="@+id/grey_300_circle"
         android:layout_width="9dp"
         android:layout_height="9dp"
         android:background="@drawable/grey_100_circle"
+        android:backgroundTint="@color/colorAccent"
         app:layout_constraintTop_toTopOf="@id/list_item_title"
         app:layout_constraintBottom_toBottomOf="@id/list_item_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/cardview"/>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></android.support.v4.widget.SwipeRefreshLayout>
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardview"

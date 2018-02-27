@@ -2,6 +2,7 @@ package viewmodel
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
+import android.content.Context
 import jsondataclasses.WikiExtract
 import repository.WikiExtractRepository
 
@@ -15,12 +16,21 @@ class WikiExtractsViewModel : ViewModel() {
     // LiveData holds the app data in a lifecycle conscious manner.
     lateinit var extracts: LiveData<MutableList<WikiExtract>>
 
+    private val wikiRepo = WikiExtractRepository.getInstance()
+
     /**
      * Private method handling the async load to expose data to the public getter function.
      */
-    fun loadExtracts() {
+    fun loadExtracts(context: Context) {
         // Handle an async for the Wiki Extracts here. Set the data returned to our LiveData object.
         // Instance of the wiki repo to grab the function that launches the retrofit async.
-        extracts = WikiExtractRepository.getInstance().getDailyExtracts()
+        extracts = wikiRepo.getDailyExtracts(context)
+    }
+
+    /**
+     * Method to find if the wiki extract has been read for ui purposes
+     */
+    fun isRead(context: Context, wikiExtract: WikiExtract?): Boolean? {
+        return wikiRepo.isRead(context, wikiExtract)
     }
 }
