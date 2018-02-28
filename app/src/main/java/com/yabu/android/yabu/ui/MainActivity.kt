@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var mListener: OnPageSelectedListener
 
     interface OnPageSelectedListener {
-        fun onPageSelectedReview(position: Int) {}
+        fun onPageSelected(position: Int) {}
     }
 
     /**
@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity() {
 
         pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
-                mListener.onPageSelectedReview(position)
+                mListener.onPageSelected(position)
             }
         })
     }

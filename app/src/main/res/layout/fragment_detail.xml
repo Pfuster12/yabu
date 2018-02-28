@@ -122,6 +122,7 @@
                         android:id="@+id/detail_extract"
                         android:layout_height="match_parent"
                         android:layout_width="wrap_content"
+                        android:textColorLink="@color/colorDarkAccent"
                         android:paddingTop="16dp"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"

@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.PorterDuff
-import android.media.Image
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
@@ -31,12 +30,10 @@ import com.bumptech.glide.util.ViewPreloadSizeProvider
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.yabu.android.yabu.R
 import jsondataclasses.WikiExtract
-import kotlinx.android.synthetic.main.callout_bubble.view.*
 import viewmodel.WikiExtractsViewModel
 import kotlinx.android.synthetic.main.fragment_reading.view.*
 import kotlinx.android.synthetic.main.no_connection.view.*
 import org.parceler.Parcels
-import repository.JishoRepository
 import repository.WikiExtractRepository
 import java.util.concurrent.TimeUnit
 

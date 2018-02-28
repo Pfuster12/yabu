@@ -22,7 +22,6 @@ import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.transition.TransitionManager
-import android.util.ArrayMap
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -30,7 +29,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.yabu.android.yabu.R
 import jsondataclasses.Kanji
 import jsondataclasses.WikiExtract
@@ -45,7 +43,6 @@ import utils.BundleKeys
 import utils.MiscUtils
 import viewmodel.JishoViewModel
 import viewmodel.WikiExtractsViewModel
-import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 

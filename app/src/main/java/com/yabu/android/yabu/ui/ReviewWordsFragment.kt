@@ -22,9 +22,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.yabu.android.yabu.R
 import jsondataclasses.Kanji
-import kotlinx.android.synthetic.main.fragment_reading.view.*
 import kotlinx.android.synthetic.main.fragment_review_words.view.*
-import kotlinx.android.synthetic.main.no_words.view.*
 import org.parceler.Parcels
 import viewmodel.ReviewViewModel
 
@@ -52,7 +50,7 @@ class ReviewWordsFragment : Fragment(), MainActivity.OnPageSelectedListener {
 
     private lateinit var mPrefs: SharedPreferences
 
-    override fun onPageSelectedReview(position: Int) {
+    override fun onPageSelected(position: Int) {
         if (position == 2) {
             mModel.loadReviewKanjis(context)
         }
@@ -79,13 +77,9 @@ class ReviewWordsFragment : Fragment(), MainActivity.OnPageSelectedListener {
         } else {
             // if not grab the list from the saved inst state
             if (savedInstanceState.containsKey(REVIEW_KEY)) {
-                val reviewParcelable: Parcelable =
-                        savedInstanceState.getParcelable(REVIEW_KEY)
                 val maps: HashMap<Int, Kanji> =
                         Parcels.unwrap(savedInstanceState.getParcelable(REVIEW_KEY))
                 mReviewKanjis = maps.toList().toMutableList()
-                // set the global list to this
-                mReviewKanjis = Parcels.unwrap(reviewParcelable)
             } else {
                 // init an empty list
                 mReviewKanjis = mutableListOf()

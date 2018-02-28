@@ -5,6 +5,8 @@
     <color name="colorPrimaryDark">@color/color100Grey</color>
     <color name="colorAccent">#17D68A</color>
 
+    <color name="colorDarkAccent">#12AB6D</color>
+
     <!-- Background color -->
     <color name="colorBackground">@android:color/background_light</color>
     <!-- Background color -->

@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.github.mikephil.charting.animation.Easing
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -25,13 +26,12 @@ import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import jsondataclasses.Kanji
-import kotlinx.android.synthetic.main.fragment_reading.view.*
 import viewmodel.ReviewViewModel
 
 /**
  * User profile fragment, to show user profile and stats.
  */
-class UserFragment : Fragment() {
+class UserFragment : Fragment(), MainActivity.OnPageSelectedListener {
 
     private lateinit var mModel: ReviewViewModel
 
@@ -39,6 +39,18 @@ class UserFragment : Fragment() {
     private lateinit var mReviewKanjis: MutableList<Pair<Int, Kanji>>
     private lateinit var mRootView: View
     private lateinit var mPrefs: SharedPreferences
+
+    // global line chart
+    private lateinit var mLineChart: LineChart
+
+    override fun onPageSelected(position: Int) {
+        if (position == 0) {
+            mModel.loadReviewKanjis(context)
+            if (mLineChart != null) {
+                mLineChart.invalidate()
+            }
+        }
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -167,7 +179,7 @@ class UserFragment : Fragment() {
      * Helper fun to set the chart data and format
      */
     private fun setLineChart(rootView: View) {
-        val chart = rootView.chart
+        mLineChart = rootView.chart
         val entries = mutableListOf<Entry>()
 
         // grab the articles as a list from monday to sunday.
@@ -209,33 +221,33 @@ class UserFragment : Fragment() {
 
         // create line data set
         val lineData = LineData(dataSet)
-        chart.data = lineData
+        mLineChart.data = lineData
         // no grid
-        chart.setDrawGridBackground(false)
-        chart.fitScreen()
+        mLineChart.setDrawGridBackground(false)
+        mLineChart.fitScreen()
         val des = Description()
         des.text = ""
-        chart.description = des
-        chart.legend.isEnabled = false
+        mLineChart.description = des
+        mLineChart.legend.isEnabled = false
 
         // x axis format
-        chart.xAxis.valueFormatter = formatter
-        chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        chart.xAxis.setDrawGridLines(false)
-        chart.xAxis.granularity = 1f
-        chart.xAxis.textSize = 10f
-        chart.xAxis.textColor = ContextCompat.getColor(context, R.color.color700Grey)
+        mLineChart.xAxis.valueFormatter = formatter
+        mLineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        mLineChart.xAxis.setDrawGridLines(false)
+        mLineChart.xAxis.granularity = 1f
+        mLineChart.xAxis.textSize = 10f
+        mLineChart.xAxis.textColor = ContextCompat.getColor(context, R.color.color700Grey)
 
         // y axis format
-        chart.axisLeft.setDrawGridLines(false)
-        chart.axisLeft.setDrawLabels(false)
-        chart.axisLeft.axisMinimum = 0f
-        chart.axisLeft.granularity = 1f
-        chart.axisLeft.textSize = 10f
-        chart.axisRight.isEnabled = false
+        mLineChart.axisLeft.setDrawGridLines(false)
+        mLineChart.axisLeft.setDrawLabels(false)
+        mLineChart.axisLeft.axisMinimum = 0f
+        mLineChart.axisLeft.granularity = 1f
+        mLineChart.axisLeft.textSize = 10f
+        mLineChart.axisRight.isEnabled = false
         // refresh chart
-        chart.invalidate()
-        chart.animateX(1000, Easing.EasingOption.EaseOutBack)
+        mLineChart.invalidate()
+        mLineChart.animateX(1000, Easing.EasingOption.EaseOutBack)
     }
 
     /**
@@ -253,7 +265,6 @@ class UserFragment : Fragment() {
 
         return articlesRead
     }
-
 
     /**
      * Helper fun to set the chart data and format
