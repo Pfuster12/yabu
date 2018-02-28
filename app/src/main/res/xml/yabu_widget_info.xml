@@ -3,4 +3,5 @@
     android:initialLayout="@layout/yabu_widget_list"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
-    android:widgetCategory="home_screen" />
+    android:widgetCategory="home_screen"
+    android:minWidth="100dp"/>

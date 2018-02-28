@@ -11,6 +11,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
 import com.yabu.android.yabu.R
 import jsondataclasses.WikiExtract
 
@@ -28,6 +30,7 @@ class ReadingRecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtra
     private val headerType = 100
     private val itemType = 101
     private val footerType = 102
+    private val adType = 103
 
     /**
      * Override function that create the view holder object.
@@ -40,6 +43,7 @@ class ReadingRecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtra
             // If item type inflate the item resource.
             itemType -> ReadingItemViewHolder(inflateViewHolder(R.layout.reading_list_item, parent),
                     wikiExtracts, listener)
+            adType -> AdItemViewHolder(inflateViewHolder(R.layout.reading_ad_item, parent))
             // If footer type inflate the footer resource.
             footerType -> FooterViewHolder(inflateViewHolder(R.layout.reading_footer, parent))
             // Else return the item layout as a default.
@@ -71,6 +75,12 @@ class ReadingRecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtra
                 // Bind the views.
                 bindListItemHolder(itemViewHolder, position)
             }
+            adType -> {
+                // Cast the holder as an ad item holder
+                val adViewHolder: AdItemViewHolder? = holder as? AdItemViewHolder
+                // Load ad and bind
+                bindAdHolder(adViewHolder)
+            }
             // If footer type bind footer texts and vectors.
             footerType -> {}// Do bind operations here
         }
@@ -81,7 +91,12 @@ class ReadingRecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtra
      */
     private fun bindListItemHolder(itemViewHolder: ReadingItemViewHolder?, position: Int) {
         // Position is minus 1 because of the header
-        val currentPosition = position - 1
+        var currentPosition = position - 1
+        if (position in 0..5) {
+            currentPosition = position - 1
+        } else if (position in 7..wikiExtracts.size + 1) {
+            currentPosition = position - 2
+        }
         // Extract current extract
         val currentExtract: WikiExtract = wikiExtracts[currentPosition]
         // Set title.
@@ -102,12 +117,17 @@ class ReadingRecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtra
                 .into(itemViewHolder?.thumbnail)
     }
 
+    private fun bindAdHolder(adViewHolder: AdItemViewHolder?) {
+        val adRequest = AdRequest.Builder().build()
+        adViewHolder?.ad?.loadAd(adRequest)
+    }
+
     /**
      * Override function to get the total items in the adapter.
      */
     override fun getItemCount(): Int {
-        // Return the lists size with header and footer.
-        return wikiExtracts.size + 1 + 1
+        // Return the lists size with header and footer and ad
+        return wikiExtracts.size + 1 + 1 + 1
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -116,9 +136,11 @@ class ReadingRecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtra
             // If its the first item it must be the header.
             0 -> headerType
             // If its within range of 1 or the array size it must be an item.
-            in 1..wikiExtracts.size -> itemType
+            in 1..5 -> itemType
+            6 -> adType
+            in 7..wikiExtracts.size + 1 -> itemType
             // If its above the list size it must be the footer.
-            wikiExtracts.size + 1 -> footerType
+            wikiExtracts.size + 1 + 1 -> footerType
             else -> itemType
         }
     }
@@ -139,14 +161,22 @@ class ReadingRecyclerViewAdapter(private val wikiExtracts: MutableList<WikiExtra
         }
 
         override fun onClick(v: View?) {
-            if (adapterPosition > 0) {
-                listener(wikiExtracts[adapterPosition - 1])
+            when (adapterPosition) {
+                in 1..5 -> listener(wikiExtracts[adapterPosition - 1])
+                in 7..wikiExtracts.size + 1 -> listener(wikiExtracts[adapterPosition - 2])
             }
         }
 
         val title: TextView = itemView.findViewById(R.id.list_item_title)
         val extract: TextView = itemView.findViewById(R.id.list_item_extract)
         val thumbnail: TopCropImageView = itemView.findViewById(R.id.list_item_thumbnail)
+    }
+
+    /**
+     * In-class header view holder implementation.
+     */
+    class AdItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val ad: AdView = itemView.findViewById(R.id.adView)
     }
 
     /**

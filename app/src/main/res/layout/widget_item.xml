@@ -99,11 +99,4 @@
         android:text="@string/callout_link_details"
         style="@style/PoweredJaStyle"
         android:textColor="@color/colorAccent" />
-
-  <!--  <View
-        android:id="@+id/widget_grey_line_divider"
-        android:layout_marginTop="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/color700Grey" />-->
 </LinearLayout>

@@ -17,6 +17,7 @@
         style="@style/ToolbarTitleStyle"/>
 
     <ImageView
+        android:contentDescription="@string/night_mode_content_description"
         android:id="@+id/night_mode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

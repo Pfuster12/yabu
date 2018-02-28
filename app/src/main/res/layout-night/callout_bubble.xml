@@ -49,6 +49,7 @@
         android:paddingBottom="8dp">
 
         <ImageView
+            android:contentDescription="@string/callout_favorite_button_content_description"
             android:id="@+id/callout_review_button"
             android:layout_width="24dp"
             android:layout_height="24dp"

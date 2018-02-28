@@ -78,16 +78,30 @@ class ReviewWordsFragment : Fragment(), MainActivity.OnPageSelectedListener {
             mReviewKanjis = mutableListOf()
         } else {
             // if not grab the list from the saved inst state
-            val reviewParcelable: Parcelable = savedInstanceState.getParcelable(ReadingFragment.WIKI_EXTRACTS_KEY)
-            // set the global list to this
-            mReviewKanjis = Parcels.unwrap(reviewParcelable)
+            if (savedInstanceState.containsKey(REVIEW_KEY)) {
+                val reviewParcelable: Parcelable =
+                        savedInstanceState.getParcelable(REVIEW_KEY)
+                val maps: HashMap<Int, Kanji> =
+                        Parcels.unwrap(savedInstanceState.getParcelable(REVIEW_KEY))
+                mReviewKanjis = maps.toList().toMutableList()
+                // set the global list to this
+                mReviewKanjis = Parcels.unwrap(reviewParcelable)
+            } else {
+                // init an empty list
+                mReviewKanjis = mutableListOf()
+            }
         }
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this.context)
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
-        outState?.putParcelable(ReviewWordsFragment.REVIEW_KEY, Parcels.wrap(mReviewKanjis))
+        // Change pair list to map for parceler purposes
+        val map = hashMapOf<Int, Kanji>()
+        for (reviewKanji in mReviewKanjis) {
+            map.put(reviewKanji.first, reviewKanji.second)
+        }
+        outState?.putParcelable(ReviewWordsFragment.REVIEW_KEY, Parcels.wrap(map))
 
         super.onSaveInstanceState(outState)
     }

@@ -19,7 +19,7 @@ class JishoViewModel : ViewModel() {
 
     lateinit var kanji: LiveData<Pair<Int?, Kanji?>>
 
-    private val jishoRepo = JishoRepository.getInstance()
+    private var jishoRepo = JishoRepository.getInstance()
 
     /**
      * Method handling the async load to expose kanji and furigana data to the ui that calls it.
@@ -33,6 +33,10 @@ class JishoViewModel : ViewModel() {
      * Method handling the async load to expose kanji definitions and tags to the ui that calls it.
      */
     fun getDefinitions(context: Context, protoKanji: Kanji) {
+        // check if coming from a point where executor was shutdown
+        if (JishoRepository.executor.isShutdown || JishoRepository.executor.isTerminated) {
+            jishoRepo = JishoRepository.getInstance()
+        }
         kanji = jishoRepo.getDefinitions(context, protoKanji)
     }
 

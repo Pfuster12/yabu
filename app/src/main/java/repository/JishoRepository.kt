@@ -117,7 +117,7 @@ class JishoRepository {
         // see if there is an existing definition, if not do a retrofit call
         val id = refreshDefinitions(context, protoKanji)
 
-        wordData.value = Pair(id, kanjiDao.getKanjiDefinition(context, protoKanji, id!!))
+        wordData.value = Pair(id, kanjiDao.getKanjiDefinition(context, protoKanji, id))
         // return a live data directly from the database
         return wordData
     }

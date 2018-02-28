@@ -73,7 +73,7 @@ class KanjisSQLDao {
      * Function to grab kanji with definitions from the database, among other info retrieved
      * from jisho from the single word search.
      */
-    fun getKanjiDefinition(context: Context, kanji: Kanji, id: Int): Kanji? {
+    fun getKanjiDefinition(context: Context, kanji: Kanji, id: Int?): Kanji? {
         var kanjiFromDatabase = kanji
 
         var future: Future<Kanji>? = null
@@ -428,7 +428,7 @@ class KanjisSQLDao {
      * Dao function to update the review boolean in the table. This will make the word
      * part of the review list.
      */
-    fun updateReviewKanji(context: Context, id: Int, isReview: Boolean): Int? {
+    fun updateReviewKanji(context: Context, id: Int?, isReview: Boolean): Int? {
         var future: Future<Int>? = null
 
         try {

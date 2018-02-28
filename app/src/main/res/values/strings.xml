@@ -102,10 +102,16 @@
 
     <!-- Content Descriptions -->
 
+    <!-- Content description for favorite button -->
+    <string name="callout_favorite_button_content_description">Save to Review Words</string>
+    <!-- Content description for list_item_thumbnail -->
+    <string name="delete_review_word_content_description">Delete review word.</string>
+    <!-- Content description for night mode -->
+    <string name="night_mode_content_description">Enable/Disable night mode</string>
     <!-- Content description for list_item_thumbnail -->
     <string name="thumbnail_content_description">Extract thumbnail</string>
-    <!-- Content description for back icon button -->
-    <string name="back_icon_content_description">Back button</string>
+    <!-- Content description for list_item_thumbnail -->
+    <string name="yabu_astronaut">Yabu astronaut</string>
     <!-- Content description for no connection -->
     <string name="no_connection_content_description">No connection image</string>
 

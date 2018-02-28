@@ -33,4 +33,11 @@ class WikiExtractsViewModel : ViewModel() {
     fun isRead(context: Context, wikiExtract: WikiExtract?): Boolean? {
         return wikiRepo.isRead(context, wikiExtract)
     }
+
+    /**
+     * Method to find if the wiki extract has been read for ui purposes
+     */
+    fun setRead(context: Context, wikiExtract: WikiExtract?, isRead: Boolean) {
+        wikiRepo.setRead(context, wikiExtract, isRead)
+    }
 }

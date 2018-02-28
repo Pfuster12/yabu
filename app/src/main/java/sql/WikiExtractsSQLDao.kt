@@ -2,6 +2,7 @@ package sql
 
 import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.provider.BaseColumns
 import jsondataclasses.WikiExtract
 import jsondataclasses.WikiThumbnail
@@ -61,8 +62,7 @@ class WikiExtractsSQLDao {
     }
 
     /**
-     * Function to check whether the articles loaded are from today's featured page. If not,
-     * it will trigger a refresh to load the most recent ones from the web.
+     * Function to check whether the article loaded has been marked as read
      */
     fun isRead(context: Context, wikiExtract: WikiExtract?): Boolean? {
         var future: Future<Boolean>? = null
@@ -73,9 +73,10 @@ class WikiExtractsSQLDao {
                         var isRead = false
                         // set the query params
                         val projection = arrayOf(BaseColumns._ID,
+                                WikiExtractsEntry.COLUMN_TITLE,
                                 WikiExtractsEntry.COLUMN_IS_READ)
-                        val selection = WikiExtractsEntry.COLUMN_PAGE_ID + " = ?"
-                        val selArgs = arrayOf(wikiExtract?.pageId!!.toString())
+                        val selection = WikiExtractsEntry.COLUMN_TITLE + " = ?"
+                        val selArgs = arrayOf(wikiExtract?.title.toString())
 
                         val cursor = context.contentResolver.query(WikiExtractsEntry.CONTENT_URI, projection, selection,
                                 selArgs, null, null)
@@ -85,14 +86,60 @@ class WikiExtractsSQLDao {
                         // check for empty cursor
                         if (cursor != null && cursor.count > 0) {
                             // cycle through cursor
-                            do {
-                                isRead = 1 == cursor.getInt(cursor.getColumnIndex(WikiExtractsEntry.COLUMN_IS_READ))
-                            } while (cursor.moveToNext())
+                            isRead = 1 == cursor.getInt(cursor.getColumnIndex(WikiExtractsEntry.COLUMN_IS_READ))
                         }
                         if (!cursor.isClosed) {
                             cursor.close()
                         }
                         return@submit isRead
+                    }
+        } catch (e: RejectedExecutionException) {
+            Logger.getLogger("WikiExtractsDao").warning(e.toString())
+        }
+
+        return try {
+            future?.get(10, TimeUnit.SECONDS)
+        } catch (e: TimeoutException) {
+            Logger.getLogger("WikiExtractsDao").warning(e.toString())
+            false
+        }
+    }
+
+    /**
+     * Function to check whether the article loaded has been marked as read
+     */
+    fun setIsRead(context: Context, wikiExtract: WikiExtract?, isRead: Boolean): Boolean? {
+        var future: Future<Boolean>? = null
+        try {
+            future =
+                    WikiExtractRepository.executor.submit<Boolean> {
+                        val values = ContentValues()
+                        values.put(WikiExtractsEntry.COLUMN_IS_READ, isRead)
+
+                        // Set the query params
+                        val projection = arrayOf(BaseColumns._ID,
+                                WikiExtractsEntry.COLUMN_TITLE)
+                        val selection = WikiExtractsEntry.COLUMN_TITLE + " = ?"
+                        val selArgs = arrayOf(wikiExtract?.title.toString())
+
+                        val cursor = context.contentResolver.query(WikiExtractsEntry.CONTENT_URI, projection, selection,
+                                selArgs, null, null)
+
+                        var id = -1
+                        // Move to results
+                        cursor.moveToFirst()
+                        // check for empty cursor
+                        if (cursor != null && cursor.count > 0) {
+                            id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID))
+                        }
+                        if (!cursor.isClosed) {
+                            cursor.close()
+                        }
+
+                        val uri = Uri.withAppendedPath(WikiExtractsEntry.CONTENT_URI, id.toString())
+                        val updatedInt = context.contentResolver.update(uri, values, null, null)
+
+                        return@submit updatedInt > 0
                     }
         } catch (e: RejectedExecutionException) {
             Logger.getLogger("WikiExtractsDao").warning(e.toString())

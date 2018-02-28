@@ -25,9 +25,6 @@
             android:launchMode="singleTop">
         </activity>
 
-        <activity android:name=".ui.DetailActivity"
-            android:launchMode="singleTop"/>
-
         <receiver android:name="widget.YabuWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

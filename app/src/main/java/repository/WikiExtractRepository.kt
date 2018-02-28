@@ -124,6 +124,10 @@ class WikiExtractRepository {
         return wikiDao.isRead(context, wikiExtract)
     }
 
+    fun setRead(context: Context, wikiExtract: WikiExtract?, isRead: Boolean) {
+        wikiDao.setIsRead(context, wikiExtract, isRead)
+    }
+
     /**
      * Helper fun to filter list out from number titles and Wikipedia meta pages.
      */

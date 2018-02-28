@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- List image item -->
+    <dimen name="wiki_image_item">144dp</dimen>
+    <!-- Margin between image and top -->
+    <dimen name="start_up_image_margin_top">96dp</dimen>
+</resources>

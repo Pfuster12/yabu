@@ -27,6 +27,7 @@
             android:layout_gravity="end"/>
 
         <ImageView
+            android:contentDescription="@string/delete_review_word_content_description"
             android:id="@+id/review_delete_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

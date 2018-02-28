@@ -5,16 +5,11 @@
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:contentDescription="@string/yabu_astronaut"
-        android:id="@+id/footer_graphic"
-        android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:src="@drawable/ground_astronautmhdpi"/>
-
-    <include
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        layout="@layout/footer_powered" />
+        ads:adSize="MEDIUM_RECTANGLE"
+        ads:adUnitId="ca-app-pub-3940256099942544/6300978111"/>
 </LinearLayout>

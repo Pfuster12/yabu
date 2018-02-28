@@ -28,6 +28,7 @@ import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.util.ViewPreloadSizeProvider
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.yabu.android.yabu.R
 import jsondataclasses.WikiExtract
 import kotlinx.android.synthetic.main.callout_bubble.view.*
@@ -64,6 +65,8 @@ class ReadingFragment : Fragment() {
     // late init a shared prefs var to check start up screen
     private lateinit var mPrefs: SharedPreferences
 
+    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
+
     /**
      * Override function when activity is created to prepare and load data from the view model.
      * This will allow data load to be ready to display when the fragment appears to the user.
@@ -80,6 +83,9 @@ class ReadingFragment : Fragment() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // init firebase analytics
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this.context)
 
         if (savedInstanceState == null) {
             // init an empty list
@@ -123,11 +129,28 @@ class ReadingFragment : Fragment() {
         // function.
         mAdapterReading = ReadingRecyclerViewAdapter(mWikiExtracts,
                 this@ReadingFragment.context, listener = { extract ->
-            // set the function with the clicked extract parameter to start the framgent
-            // bottom sheet. Put the extract as a parcelable.
-            val bottomSheetFragment = DetailFragment.newInstance(Parcels.wrap(extract))
-            bottomSheetFragment.show(fragmentManager, bottomSheetFragment.tag)
+            // log analytics event
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, extract.title)
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
 
+            // check if its sw600 landscape layout
+            if (rootView.landscape_detail_fragment_container != null) {
+                // if it is add fragment to container
+                val detailFragment = DetailFragment.newInstance(Parcels.wrap(extract))
+                if (rootView.landscape_detail_fragment_container?.id != null) {
+                    fragmentManager.beginTransaction()
+                            .replace(rootView.landscape_detail_fragment_container?.id as Int, detailFragment)
+                            .addToBackStack("DetailFragmentLandscape")
+                            .commit()
+                }
+            } else {
+                // we are in non sw600 landscape layout
+                // set the function with the clicked extract parameter to start the framgent
+                // bottom sheet. Put the extract as a parcelable.
+                val bottomSheetFragment = DetailFragment.newInstance(Parcels.wrap(extract))
+                bottomSheetFragment.show(fragmentManager, bottomSheetFragment.tag)
+            }
         })
         rootView.reading_recycler_view.adapter = mAdapterReading
         rootView.reading_recycler_view.itemAnimator = RecyclerViewAnimator()
@@ -136,11 +159,15 @@ class ReadingFragment : Fragment() {
         showRecyclerView(rootView)
 
         mSwipeRefreshLayout = rootView.swipe_refresh
-        rootView.swipe_refresh.isEnabled = true
-        val oldExtracts = mWikiExtracts
-        // Set the swipe refresh listener
-        rootView.swipe_refresh.setOnRefreshListener {
-            onRefresh(rootView, oldExtracts)
+        if (rootView.landscape_detail_fragment_container == null) {
+            rootView.swipe_refresh.isEnabled = true
+            val oldExtracts = mWikiExtracts
+            // Set the swipe refresh listener
+            rootView.swipe_refresh.setOnRefreshListener {
+                onRefresh(rootView, oldExtracts)
+            }
+        } else {
+            mSwipeRefreshLayout.isEnabled = false
         }
 
         // assign a global var
@@ -320,7 +347,9 @@ class ReadingFragment : Fragment() {
         rootView.reading_no_connection.reading_no_connection_detail.alpha = 0f
     }
 
-
+    /**
+     * Override on destroy to shutdown executor in repo
+     */
     override fun onDestroy() {
         WikiExtractRepository.executor.shutdown()
         try {
@@ -332,7 +361,6 @@ class ReadingFragment : Fragment() {
         }
         super.onDestroy()
     }
-
 
     /**
      * Preload Model provider for the Glide integration with Recycler View. The class receives

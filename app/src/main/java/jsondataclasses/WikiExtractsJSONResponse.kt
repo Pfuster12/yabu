@@ -29,4 +29,4 @@ data class WikiExtract @ParcelConstructor public constructor(public val pageId: 
  * of the image in the source keyword.
  */
 @Parcel
-data class WikiThumbnail public @ParcelConstructor constructor(public val source: String?)
+data class WikiThumbnail @ParcelConstructor public constructor(public val source: String?)

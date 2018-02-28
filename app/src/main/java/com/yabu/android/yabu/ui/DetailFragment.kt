@@ -22,6 +22,7 @@ import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.transition.TransitionManager
+import android.util.ArrayMap
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +30,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.yabu.android.yabu.R
 import jsondataclasses.Kanji
 import jsondataclasses.WikiExtract
@@ -43,7 +45,9 @@ import utils.BundleKeys
 import utils.MiscUtils
 import viewmodel.JishoViewModel
 import viewmodel.WikiExtractsViewModel
+import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.HashMap
 
 /**
  * Fragment for the details of an extract screen.
@@ -61,7 +65,7 @@ class DetailFragment : BottomSheetDialogFragment() {
 
     private lateinit var mPrefs: SharedPreferences
 
-    private var misRead: Boolean? = false
+    private var misRead: Boolean = false
 
     /**
      * Lazy init the parcelable unwrap into the current wikiExtract to have class wide access to it.
@@ -76,6 +80,9 @@ class DetailFragment : BottomSheetDialogFragment() {
     private val kanjiDao = KanjisSQLDao.getInstance()
 
     companion object {
+        val READ_BOOL_KEY = "com.yabu.android.yabu.READ_BOOL_KEY"
+        val KANJIS_KEY = "com.yabu.android.yabu.KANJIS_KEY"
+
         /**
          * Helper function to create new instance passing the
          * wikiExtract as a bundle in the arguments.
@@ -99,14 +106,35 @@ class DetailFragment : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // init the kanji list
-        mKanjis = mutableListOf()
-
         // Get the ViewModel for the Jisho Detail Fragment
         mModelWiki = ViewModelProviders.of(this@DetailFragment)
                 .get(WikiExtractsViewModel::class.java)
 
-        misRead = mModelWiki.isRead(context, wikiExtract)
+        if (savedInstanceState == null) {
+            // init the kanji list
+            mKanjis = mutableListOf()
+
+            val readBool =  mModelWiki.isRead(context, wikiExtract)
+
+            if (readBool != null) {
+                misRead = readBool
+            } else {
+                misRead = false
+            }
+        } else {
+            val maps: HashMap<List<Int>, Kanji> =
+                    Parcels.unwrap(savedInstanceState.getParcelable(DetailFragment.KANJIS_KEY))
+            val pairKanjisNew = mutableListOf<Pair<IntRange, Kanji>>()
+            for (map in maps) {
+                val first = map.key[0]
+                val last = map.key[1]
+
+                pairKanjisNew.add(Pair(IntRange(first, last), map.value))
+            }
+            mKanjis = pairKanjisNew
+
+            misRead = savedInstanceState.getBoolean(DetailFragment.READ_BOOL_KEY)
+        }
 
         // init the spannable
         if (wikiExtract?.extract != null) {
@@ -119,6 +147,20 @@ class DetailFragment : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        // save isRead boolean
+        outState?.putBoolean(DetailFragment.READ_BOOL_KEY, misRead)
+
+        // Change pair list to map for parceler purposes
+        val map = hashMapOf<MutableList<Int>, Kanji>()
+        for (kanji in mKanjis) {
+            map.put(mutableListOf(kanji.first.first, kanji.first.last), kanji.second)
+        }
+        outState?.putParcelable(DetailFragment.KANJIS_KEY, Parcels.wrap(map))
+
+        super.onSaveInstanceState(outState)
+    }
+
     /**
      * Override to inflate layout and bind views.
      */
@@ -126,6 +168,13 @@ class DetailFragment : BottomSheetDialogFragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val rootView = inflater!!.inflate(R.layout.fragment_detail, container, false)
+
+        if (savedInstanceState != null) {
+            // Set the clickable spans with the Kanjis
+            setSpannable(mKanjis, rootView)
+            // update the spannable string to the text view
+            rootView.detail_extract.text = spannableString
+        }
 
         // Set the toolbar title to Reading title.
         setToolbarTitle(rootView)
@@ -159,23 +208,14 @@ class DetailFragment : BottomSheetDialogFragment() {
             }
         })
 
+        if (misRead) {
+            rootView.read_button.text = context?.getString(R.string.read_that_button_false)
+        }
 
         // set an onclick to the read button to set if its read
         rootView.read_button.setOnClickListener {
-            if (misRead!!) {
+            if (misRead) {
                 misRead = false
-                rootView.read_button.animate().alpha(0.2f).setListener(object : AnimatorListenerAdapter() {
-                    /**
-                     * Override animation end to set visibility.
-                     */
-                    override fun onAnimationEnd(animation: Animator?) {
-                        rootView.read_button.animate().alpha(1.0f).start()
-                        rootView.read_button.text = context?.getString(R.string.read_that_button_false)
-                    }
-                }).start()
-                setArticlesRead(misRead!!)
-            } else {
-                misRead = true
                 rootView.read_button.animate().alpha(0.2f).setListener(object : AnimatorListenerAdapter() {
                     /**
                      * Override animation end to set visibility.
@@ -185,7 +225,19 @@ class DetailFragment : BottomSheetDialogFragment() {
                         rootView.read_button.text = context?.getString(R.string.read_that_button)
                     }
                 }).start()
-                setArticlesRead(misRead!!)
+                setArticlesRead(misRead)
+            } else {
+                misRead = true
+                rootView.read_button.animate().alpha(0.2f).setListener(object : AnimatorListenerAdapter() {
+                    /**
+                     * Override animation end to set visibility.
+                     */
+                    override fun onAnimationEnd(animation: Animator?) {
+                        rootView.read_button.animate().alpha(1.0f).start()
+                        rootView.read_button.text = context?.getString(R.string.read_that_button_false)
+                    }
+                }).start()
+                setArticlesRead(misRead)
             }
         }
 
@@ -197,6 +249,7 @@ class DetailFragment : BottomSheetDialogFragment() {
      * Helper fun to set the articles to persist for data graph in user fragment
      */
     private fun setArticlesRead(isRead: Boolean) {
+        mModelWiki.setRead(context, wikiExtract, isRead)
         // grab the preferences
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context)
 
@@ -226,10 +279,10 @@ class DetailFragment : BottomSheetDialogFragment() {
      */
     private fun setToolbarTitle(rootView: View) {
         // Grab the title of the toolbar.
-        val toolbarTitle: TextView = rootView
-                .layout_toolbar.findViewById(R.id.toolbar_title)
+        val toolbarTitle: TextView? = rootView
+                .layout_toolbar?.findViewById(R.id.toolbar_title)
         // Set the title of the toolbar to the Reading tab.
-        toolbarTitle.text = getString(R.string.bottom_sheet_toolbar_title_prefix, wikiExtract?.title)
+        toolbarTitle?.text = getString(R.string.bottom_sheet_toolbar_title_prefix, wikiExtract?.title)
     }
 
     /**
@@ -329,6 +382,7 @@ class DetailFragment : BottomSheetDialogFragment() {
                             // Kanji was clicked with definition so we need to hide it
                             hideFurigana(furiganaView)
                             hideCalloutBubble(rootView)
+                            hideLoadingCallout(rootView)
 
                             // Set the state back to show furigana
                             clickedNumber = controlNumber.showFurigana
@@ -356,7 +410,7 @@ class DetailFragment : BottomSheetDialogFragment() {
         val observer: Observer<Pair<Int?, Kanji?>> = Observer { kanji ->
             // Check for null since addAll() accepts non-null
             if (kanji != null) {
-                setCalloutBubble(rootView, Pair(protoKanji.first, kanji.second), furiganaView, kanji.first!!)
+                setCalloutBubble(rootView, Pair(protoKanji.first, kanji.second), furiganaView, kanji.first)
             }
         }
 
@@ -423,21 +477,81 @@ class DetailFragment : BottomSheetDialogFragment() {
     }
 
     private fun setCalloutBubble(rootView: View, kanji: Pair<IntRange, Kanji?>,
-                                 furiganaView: TextView, kanjiId: Int) {
+                                 furiganaView: TextView, kanjiId: Int?) {
         // Set the word title.
         rootView.callout_bubble.callout_title.text = kanji.second?.word
         // Set the reading.
         rootView.callout_bubble.callout_reading.text = kanji.second?.reading
         // Set the tags
-        setCalloutTags(kanji.second!!, rootView)
+        setCalloutTags(kanji.second, rootView)
         // set the review button according to review boolean
-        rootView.callout_bubble.callout_review_button.isSelected = kanji.second!!.isReview
-        if (kanji.second!!.isReview) {
-            rootView.callout_bubble.callout_review_button.setColorFilter(
-                    ContextCompat.getColor(context, R.color.colorAccent), PorterDuff.Mode.SRC_ATOP)
-        } else {
-            rootView.callout_bubble.callout_review_button.setColorFilter(
-                    ContextCompat.getColor(context, R.color.color500Grey), PorterDuff.Mode.SRC_ATOP)
+        val kanjiWord = kanji.second
+        if (kanjiWord != null) {
+            rootView.callout_bubble.callout_review_button.isSelected = kanjiWord.isReview
+
+            if (kanjiWord.isReview) {
+                rootView.callout_bubble.callout_review_button.setColorFilter(
+                        ContextCompat.getColor(context, R.color.colorAccent), PorterDuff.Mode.SRC_ATOP)
+            } else {
+                rootView.callout_bubble.callout_review_button.setColorFilter(
+                        ContextCompat.getColor(context, R.color.color500Grey), PorterDuff.Mode.SRC_ATOP)
+            }
+
+            if (!kanjiWord.url.isEmpty()) {
+                // if there is jisho data show details link
+                rootView.callout_bubble.callout_details_link.visibility = View.VISIBLE
+                // Set an onclick to open the jisho url, and add an animation for the alpha
+                rootView.callout_bubble.callout_details_link.alpha = 1.0f
+                // Set a listener to know when the alpha ends to return to 1.0f alpha
+                rootView.callout_bubble.callout_details_link.setOnClickListener {
+                    // set animation
+                    rootView.callout_bubble.callout_details_link.animate().alpha(0.2f)
+                            .setDuration(500).setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator?) {
+                            rootView.callout_bubble.callout_details_link.animate().alpha(1.0f)
+                                    .setDuration(500).start()
+                        }
+
+                    }).start()
+                    // Set the url with an intent.
+                    val webpage = Uri.parse(kanji.second?.url)
+                    val intent = Intent(Intent.ACTION_VIEW, webpage)
+                    if (intent.resolveActivity(context.packageManager) != null) {
+                        startActivity(intent)
+                    }
+                }
+            } else {
+                // if there isnt internet data, hide the link.
+                rootView.callout_bubble.callout_details_link.visibility = View.INVISIBLE
+            }
+
+            // Set the definitions.
+            when (kanjiWord.mDefinitions?.size) {
+                1 -> {
+                    // There is only one definition so set the first and hide the second.
+                    rootView.callout_bubble.callout_definition_alone.text = context.getString(R.string.definition_1_placeholder, kanji.second!!.mDefinitions[0])
+                    // Set visibility
+                    showOneDefinition(rootView)
+                }
+                2 -> {
+                    // There are more than 1 so add the two definitions.
+                    rootView.callout_bubble.callout_definition_alone.text = context.getString(R.string.definition_1_placeholder, kanji.second!!.mDefinitions[0])
+                    rootView.callout_bubble.callout_definition_1.text = context.getString(R.string.definition_1_placeholder, kanji.second!!.mDefinitions[0])
+                    rootView.callout_bubble.callout_definition_2.text = context.getString(R.string.definition_2_placeholder, kanji.second!!.mDefinitions[1])
+                    // Set visibility
+                    showTwoDefinitions(rootView)
+                }
+                else -> {
+                    // There is no definition available
+                    val def = context.getString(R.string.no_definition)
+                    // If there is no kanji loaded at all,
+                    if (kanjiWord.url.isEmpty()) {
+                        rootView.callout_bubble.callout_definition_alone.text = def
+                    }
+                    // Set visibility
+                    showOneDefinition(rootView)
+                }
+            }
         }
 
         rootView.callout_bubble.callout_review_button.setOnClickListener {
@@ -458,76 +572,22 @@ class DetailFragment : BottomSheetDialogFragment() {
             }
         }
 
-        if (!kanji.second!!.url.isEmpty()) {
-            // if there is jisho data show details link
-            rootView.callout_bubble.callout_details_link.visibility = View.VISIBLE
-            // Set an onclick to open the jisho url, and add an animation for the alpha
-            rootView.callout_bubble.callout_details_link.alpha = 1.0f
-            // Set a listener to know when the alpha ends to return to 1.0f alpha
-            rootView.callout_bubble.callout_details_link.setOnClickListener {
-                // set animation
-                rootView.callout_bubble.callout_details_link.animate().alpha(0.2f)
-                        .setDuration(500).setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator?) {
-                        rootView.callout_bubble.callout_details_link.animate().alpha(1.0f)
-                                .setDuration(500).start()
-                    }
-
-                }).start()
-                // Set the url with an intent.
-                val webpage = Uri.parse(kanji.second?.url)
-                val intent = Intent(Intent.ACTION_VIEW, webpage)
-                if (intent.resolveActivity(context.packageManager) != null) {
-                    startActivity(intent)
-                }
-            }
-        } else {
-            // if there isnt internet data, hide the link.
-            rootView.callout_bubble.callout_details_link.visibility = View.INVISIBLE
-        }
-
-        // Set the definitions.
-        when (kanji.second?.mDefinitions?.size) {
-            1 -> {
-                // There is only one definition so set the first and hide the second.
-                rootView.callout_bubble.callout_definition_alone.text = context.getString(R.string.definition_1_placeholder, kanji.second!!.mDefinitions[0])
-                // Set visibility
-                showOneDefinition(rootView)
-            }
-            2 -> {
-                // There are more than 1 so add the two definitions.
-                rootView.callout_bubble.callout_definition_alone.text = context.getString(R.string.definition_1_placeholder, kanji.second!!.mDefinitions[0])
-                rootView.callout_bubble.callout_definition_1.text = context.getString(R.string.definition_1_placeholder, kanji.second!!.mDefinitions[0])
-                rootView.callout_bubble.callout_definition_2.text = context.getString(R.string.definition_2_placeholder, kanji.second!!.mDefinitions[1])
-                // Set visibility
-                showTwoDefinitions(rootView)
-            }
-            else -> {
-                // There is no definition available
-                val def = context.getString(R.string.no_definition)
-                // If there is no kanji loaded at all,
-                if (kanji.second!!.url.isEmpty()) {
-                    rootView.callout_bubble.callout_definition_alone.text = def
-                }
-                // Set visibility
-                showOneDefinition(rootView)
-            }
-        }
-
         // Kanji was clicked with furigana so we show explanation
         setCalloutBubblePosition(rootView, kanji, furiganaView)
     }
 
-    private fun setCalloutTags(kanji: Kanji, rootView: View) {
+    private fun setCalloutTags(kanji: Kanji?, rootView: View) {
         // Check for the common tag
-        if (kanji.is_common) {
-            rootView.callout_bubble.callout_common_tag.visibility = View.VISIBLE
-        } else {
-            rootView.callout_bubble.callout_common_tag.visibility = View.GONE
+        if (kanji != null) {
+            if (kanji.is_common) {
+                rootView.callout_bubble.callout_common_tag.visibility = View.VISIBLE
+            } else {
+                rootView.callout_bubble.callout_common_tag.visibility = View.GONE
+            }
         }
 
         // Check the jlpt level and set color and text
-        when (kanji.jlptTag) {
+        when (kanji?.jlptTag) {
             -1 -> rootView.callout_bubble.callout_jlpt_tag.visibility = View.GONE
             1 -> {
                 rootView.callout_bubble.callout_jlpt_tag.visibility = View.VISIBLE
@@ -643,35 +703,90 @@ class DetailFragment : BottomSheetDialogFragment() {
         // Set the bottom bubble margin to be gone
         rootView.callout_bubble.callout_title_margin.visibility = View.GONE
         setMaxWidth(MiscUtils.getUtils().pxFromDp(context, 220f).toInt(), rootView)
-        // Get the text view bounds height.
-        val bounds = Rect()
-        furiganaView.paint.getTextBounds(kanji.second?.reading, 0, kanji.second!!.reading.length, bounds)
-        val furiganaWidth = bounds.width()
 
-        // Get the layout of the text view
-        val textViewLayout = detail_extract.layout
+        val kanjiWord = kanji.second
+        if (kanjiWord != null) {
+            // Get the text view bounds height.
+            val bounds = Rect()
+            furiganaView.paint.getTextBounds(kanji.second?.reading, 0, kanjiWord.reading.length, bounds)
+            val furiganaWidth = bounds.width()
 
-        // Calculate the offset of furigana
-        val offsetPair = calculateFuriganaOffsets(rootView, furiganaView, kanji)
-        // Offset the callout bubble subtracting his height
-        rootView.callout_bubble.y = offsetPair.second - rootView.callout_bubble.height
-        rootView.callout_bubble.x = offsetPair.first - (rootView.callout_bubble.width / 2) + (furiganaWidth / 2)
+            // Get the layout of the text view
+            val textViewLayout = detail_extract.layout
 
-        // Grab the width and padding.
-        val calloutWidth = rootView.callout_bubble.measuredWidth
+            // Calculate the offset of furigana
+            val offsetPair = calculateFuriganaOffsets(rootView, furiganaView, kanji)
+            // Offset the callout bubble subtracting his height
+            rootView.callout_bubble.y = offsetPair.second - rootView.callout_bubble.height
+            rootView.callout_bubble.x = offsetPair.first - (rootView.callout_bubble.width / 2) + (furiganaWidth / 2)
 
-        // Get metrics of screen device.
-        val displayMetrics = DisplayMetrics()
-        this@DetailFragment.activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val screenWidth = displayMetrics.widthPixels
+            // Grab the width and padding.
+            val calloutWidth = rootView.callout_bubble.measuredWidth
 
-        // Check if the callout bubble is out of the screen
-        if (rootView.callout_bubble.x < 0) {
-            // If it is out of the start side, change bubble to start svg and move to the edge with padding.
-            // Check first if we need the bottom variant
+            // Get metrics of screen device.
+            val displayMetrics = DisplayMetrics()
+            this@DetailFragment.activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+            val screenWidth = displayMetrics.widthPixels
+
+            // Check if the callout bubble is out of the screen
+            if (rootView.callout_bubble.x < 0) {
+                // If it is out of the start side, change bubble to start svg and move to the edge with padding.
+                // Check first if we need the bottom variant
+                if (rootView.callout_bubble.y < 0) {
+                    rootView.callout_bubble.background =
+                            context.getDrawable(R.drawable.ic_callout_bubble_start_bottom_shadow)
+
+                    // Lower the callout to be under the character.
+                    val lineNumber = textViewLayout.getLineForOffset(kanji.first.first)
+                    val lineBottom = textViewLayout.getLineBottom(lineNumber + 1)
+
+                    rootView.callout_bubble.y = lineBottom.toFloat()
+                    rootView.callout_bubble.callout_title_margin.visibility = View.INVISIBLE
+
+                    // Set the padding to be less
+                    setPaddingForBottomCallout(rootView, 20f)
+                } else {
+                    rootView.callout_bubble.background =
+                            context.getDrawable(R.drawable.ic_callout_bubble_start_shadow)
+                    rootView.callout_bubble.callout_title_margin.visibility = View.GONE
+                }
+                // If it is from the start, set the x to the offset calculated.
+                rootView.callout_bubble.x =  offsetPair.first
+            } else if ((rootView.callout_bubble.x + calloutWidth) > screenWidth) {
+                // If it is out of the end side, change bubble to end svg and move to the edge with padding.
+                // If it is not make end x the last char of the start line plus the one charwidth
+                // Span of one character
+                val charWidth =
+                        textViewLayout.getPrimaryHorizontal(1) - textViewLayout.getPrimaryHorizontal(0)
+
+                if (rootView.callout_bubble.y < 0) {
+                    rootView.callout_bubble.background =
+                            context.getDrawable(R.drawable.ic_callout_bubble_end_bottom_shadow)
+
+                    // Lower the callout to be under the character.
+                    val lineNumber = textViewLayout.getLineForOffset(kanji.first.first)
+                    val lineBottom = textViewLayout.getLineBottom(lineNumber + 1)
+
+                    rootView.callout_bubble.y = lineBottom.toFloat()
+                    rootView.callout_bubble.callout_title_margin.visibility = View.INVISIBLE
+
+                    // Set the padding to be less
+                    setPaddingForBottomCallout(rootView, 20f)
+                } else {
+                    rootView.callout_bubble.background =
+                            context.getDrawable(R.drawable.ic_callout_bubble_end_shadow)
+                    rootView.callout_bubble.callout_title_margin.visibility = View.GONE
+                }
+                // Set the callout to be at the end of the text + some char widths to center it.
+                rootView.callout_bubble.x =
+                        offsetPair.first - calloutWidth + (furiganaWidth / 2) + (charWidth / 1.2f)
+            }
+
+            // Check if the bubble goes off the layout on top and is the middle callout
             if (rootView.callout_bubble.y < 0) {
+                // If it does set the bottom variant of the callout.
                 rootView.callout_bubble.background =
-                        context.getDrawable(R.drawable.ic_callout_bubble_start_bottom_shadow)
+                        context.getDrawable(R.drawable.ic_callout_bubble_middle_bottom_shadow)
 
                 // Lower the callout to be under the character.
                 val lineNumber = textViewLayout.getLineForOffset(kanji.first.first)
@@ -682,100 +797,51 @@ class DetailFragment : BottomSheetDialogFragment() {
 
                 // Set the padding to be less
                 setPaddingForBottomCallout(rootView, 20f)
-            } else {
-                rootView.callout_bubble.background =
-                        context.getDrawable(R.drawable.ic_callout_bubble_start_shadow)
-                rootView.callout_bubble.callout_title_margin.visibility = View.GONE
             }
-            // If it is from the start, set the x to the offset calculated.
-            rootView.callout_bubble.x =  offsetPair.first
-        } else if ((rootView.callout_bubble.x + calloutWidth) > screenWidth) {
-            // If it is out of the end side, change bubble to end svg and move to the edge with padding.
-            // If it is not make end x the last char of the start line plus the one charwidth
-            // Span of one character
-            val charWidth =
-                    textViewLayout.getPrimaryHorizontal(1) - textViewLayout.getPrimaryHorizontal(0)
 
-            if (rootView.callout_bubble.y < 0) {
-                rootView.callout_bubble.background =
-                        context.getDrawable(R.drawable.ic_callout_bubble_end_bottom_shadow)
+            // Check if callout is overflows at the bottom.
+            if (rootView.callout_bubble.y + rootView.callout_bubble.height > rootView.furigana_parent.height) {
+                val paddingHeight = (rootView.callout_bubble.y + rootView.callout_bubble.height) -
+                        rootView.furigana_parent.height +
+                        MiscUtils.getUtils().pxFromDp(context, 16f)
 
-                // Lower the callout to be under the character.
-                val lineNumber = textViewLayout.getLineForOffset(kanji.first.first)
-                val lineBottom = textViewLayout.getLineBottom(lineNumber + 1)
-
-                rootView.callout_bubble.y = lineBottom.toFloat()
-                rootView.callout_bubble.callout_title_margin.visibility = View.INVISIBLE
-
-                // Set the padding to be less
-                setPaddingForBottomCallout(rootView, 20f)
-            } else {
-                rootView.callout_bubble.background =
-                        context.getDrawable(R.drawable.ic_callout_bubble_end_shadow)
-                rootView.callout_bubble.callout_title_margin.visibility = View.GONE
+                val params = rootView.detail_padding_bottom.layoutParams
+                params.height = paddingHeight.toInt()
+                params.width = ActionBar.LayoutParams.MATCH_PARENT
+                rootView.detail_padding_bottom.layoutParams = params
+                rootView.detail_padding_bottom.visibility = View.VISIBLE
             }
-            // Set the callout to be at the end of the text + some char widths to center it.
-            rootView.callout_bubble.x =
-                    offsetPair.first - calloutWidth + (furiganaWidth / 2) + (charWidth / 1.2f)
-        }
 
-        // Check if the bubble goes off the layout on top and is the middle callout
-        if (rootView.callout_bubble.y < 0) {
-            // If it does set the bottom variant of the callout.
-            rootView.callout_bubble.background =
-                    context.getDrawable(R.drawable.ic_callout_bubble_middle_bottom_shadow)
+            /*
+            Calculate whether the new callout bubble is out of the screen width because of the text
+            and reduce the max width of the text to change this.
+             */
+            val padding = rootView.detail_extract.paddingStart
+            if (rootView.callout_bubble.x < 0) {
+                // The bubble is out of the start so calculate what the max width should be
+                // to be in plus padding 16dp
+                val endXCoordinate = rootView.callout_bubble.x + calloutWidth
 
-            // Lower the callout to be under the character.
-            val lineNumber = textViewLayout.getLineForOffset(kanji.first.first)
-            val lineBottom = textViewLayout.getLineBottom(lineNumber + 1)
+                val maxWidth = (endXCoordinate - padding) - (padding * 2)
+                // Set the max width of the text views
+                setMaxWidth(maxWidth.toInt(), rootView)
+            } else if ((rootView.callout_bubble.x + calloutWidth) > screenWidth) {
+                // The bubble is out of the end so calculate what the max width should be
+                // to be in minus padding 16dp
+                val endXCoordinate = screenWidth - padding
 
-            rootView.callout_bubble.y = lineBottom.toFloat()
-            rootView.callout_bubble.callout_title_margin.visibility = View.INVISIBLE
+                val maxWidth = (endXCoordinate - rootView.callout_bubble.x) - (padding * 2)
+                // Set the max width of the text views
+                setMaxWidth(maxWidth.toInt(), rootView)
+            }
+            // Hide the loading spinner
+            hideLoadingCallout(rootView)
+            // Show the callout
+            showCalloutBubble(rootView)
 
-            // Set the padding to be less
-            setPaddingForBottomCallout(rootView, 20f)
-        }
-
-        // Check if callout is overflows at the bottom.
-        if (rootView.callout_bubble.y + rootView.callout_bubble.height > rootView.furigana_parent.height) {
-            val paddingHeight = (rootView.callout_bubble.y + rootView.callout_bubble.height) - rootView.furigana_parent.height + MiscUtils.getUtils().pxFromDp(context, 16f)
-
-            val params = rootView.detail_padding_bottom.layoutParams
-            params.height = paddingHeight.toInt()
-            params.width = ActionBar.LayoutParams.MATCH_PARENT
-            rootView.detail_padding_bottom.layoutParams = params
-            rootView.detail_padding_bottom.visibility = View.VISIBLE
-        }
-
-        /*
-        Calculate whether the new callout bubble is out of the screen width because of the text
-        and reduce the max width of the text to change this.
-         */
-        val padding = rootView.detail_extract.paddingStart
-        if (rootView.callout_bubble.x < 0) {
-            // The bubble is out of the start so calculate what the max width should be
-            // to be in plus padding 16dp
-            val endXCoordinate = rootView.callout_bubble.x + calloutWidth
-
-            val maxWidth = (endXCoordinate - padding) - (padding * 2)
-            // Set the max width of the text views
-            setMaxWidth(maxWidth.toInt(), rootView)
-        } else if ((rootView.callout_bubble.x + calloutWidth) > screenWidth) {
-            // The bubble is out of the end so calculate what the max width should be
-            // to be in minus padding 16dp
-            val endXCoordinate = screenWidth - padding
-
-            val maxWidth = (endXCoordinate - rootView.callout_bubble.x) - (padding * 2)
-            // Set the max width of the text views
-            setMaxWidth(maxWidth.toInt(), rootView)
-        }
-        // Hide the loading spinner
-        hideLoadingCallout(rootView)
-        // Show the callout
-        showCalloutBubble(rootView)
-
-        if (furiganaView.visibility != View.VISIBLE) {
-            hideCalloutBubble(rootView)
+            if (furiganaView.visibility != View.VISIBLE) {
+                hideCalloutBubble(rootView)
+            }
         }
     }
 
@@ -828,7 +894,7 @@ class DetailFragment : BottomSheetDialogFragment() {
                                          kanji: Pair<IntRange, Kanji?>): Pair<Float, Float> {
         // Get the text view bounds height
         val bounds = Rect()
-        furiganaView.paint.getTextBounds(kanji.second!!.reading, 0, kanji.second!!.reading?.length, bounds)
+        furiganaView.paint.getTextBounds(kanji.second!!.reading, 0, kanji.second!!.reading.length, bounds)
         val furiganaHeight = bounds.height()
         val furiganaWidth = bounds.width()
 
@@ -892,9 +958,7 @@ class DetailFragment : BottomSheetDialogFragment() {
          */
         // Get metrics of screen device.
         val displayMetrics = DisplayMetrics()
-        if (this@DetailFragment != null) {
-            this@DetailFragment.activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
-        }
+        this@DetailFragment.activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         val screenWidth = displayMetrics.widthPixels
 
         // If the furigana goes off the end screen

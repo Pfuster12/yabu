@@ -42,7 +42,7 @@
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/chart"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="@dimen/line_chart_height"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:layout_marginStart="32dp"
@@ -111,6 +111,7 @@
                 android:paddingBottom="16dp" />
 
             <ImageView
+                android:contentDescription="@string/yabu_astronaut"
                 android:id="@+id/review_footer_graphic"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"

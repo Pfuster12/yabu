@@ -7,9 +7,11 @@
     <!-- Collapsing app bar height in detail screen -->
     <dimen name="collapsing_app_bar_height">300dp</dimen>
     <!-- Margin between titles in Start-Up screen -->
+    <dimen name="start_up_title_margin_top">60dp</dimen>
+    <!-- Margin between titles in Start-Up screen -->
     <dimen name="start_up_titles_margin_top">24dp</dimen>
     <!-- Margin between image and top -->
-    <dimen name="start_up_image_margin_top">32dp</dimen>
+    <dimen name="start_up_image_margin_top">82dp</dimen>
     <!-- End Margin between astronaut logo -->
     <dimen name="start_up_image_end_margin">120dp</dimen>
     <!-- End Margin between astronaut logo -->
@@ -17,4 +19,16 @@
 
     <!-- Bottom sheet peek dimen -->
     <dimen name="bottom_sheet_peek">360dp</dimen>
+
+    <!-- Bottom sheet peek dimen -->
+    <dimen name="line_chart_height">260dp</dimen>
+
+    <!-- List image item -->
+    <dimen name="wiki_image_item">144dp</dimen>
+
+    <!-- List image item -->
+    <dimen name="detail_text_padding">0dp</dimen>
+
+    <!-- read that button margin bottom -->
+    <dimen name="read_button_bottom_margin">8dp</dimen>
 </resources>

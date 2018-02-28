@@ -52,8 +52,8 @@ interface WikiAPIService {
             "&exintro=1" +
             // Return the page ids as a list
             "&indexpageids" +
-            // The max width of the thumbnail. As a list thumbnail 360 px will be enough (360dp)
-            "&pithumbsize=360" +
+            // The max width of the thumbnail.
+            "&pithumbsize=1080" +
             // Return in a JSON format.
             "&format=json" +
             // Return new json format with proper page array.
