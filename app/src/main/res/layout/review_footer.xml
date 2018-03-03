@@ -28,7 +28,7 @@
         android:layout_width="3dp"
         android:layout_height="3dp"
         android:layout_gravity="center"
-        android:background="@drawable/grey_700_circle" />
+        android:background="@drawable/accent_circle" />
 
     <TextView
         android:id="@+id/review_info_text"

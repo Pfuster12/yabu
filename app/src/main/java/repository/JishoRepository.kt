@@ -65,15 +65,16 @@ class JishoRepository {
         try {
             future = executor.submit<Boolean> {
 
-                // check if words are from yesterday
-                val isToday = kanjiDao.isTodayWords(context)
-                if (!isToday) {
-                    kanjiDao.deleteYesterdayKanjis(context)
-                }
                 // check for furigana readings
                 val hasReadings = kanjiDao.hasReadings(context, wikiExtract?.title)
 
                 if (!hasReadings && isConnected(context)) {
+                    // check if words are from yesterday
+                    val isToday = kanjiDao.isTodayWords(context)
+                    if (!isToday) {
+                        // delete only if there is internet to load new words.
+                        kanjiDao.deleteYesterdayKanjis(context)
+                    }
                     // Build the query string for the api call
                     val words = WordScanner.getUtils().buildJishoQuery(wikiExtract?.extract)
                     // If there aren't, execute a web call

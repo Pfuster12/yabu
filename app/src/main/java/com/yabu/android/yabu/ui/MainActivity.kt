@@ -106,6 +106,7 @@ class MainActivity : AppCompatActivity() {
             val editor = mPrefs.edit()
             editor.putBoolean(StartUpActivity.START_UP_KEY, true)
             editor.apply()
+            finishAfterTransition()
         }
     }
 

@@ -7,12 +7,13 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_yabu"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_yabu_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity"
+        <activity
+            android:name=".ui.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,9 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ui.StartUpActivity"
-            android:launchMode="singleTop">
+        <activity
+            android:name=".ui.StartUpActivity"
+            android:launchMode="singleTop"
+            android:noHistory="true">
         </activity>
 
         <receiver android:name="widget.YabuWidget">
@@ -36,20 +38,23 @@
         </receiver>
 
         <provider
-            android:authorities="com.yabu.android.yabu"
             android:name="sql.KanjisContentProvider"
-            android:exported="true"/>
-
+            android:authorities="com.yabu.android.yabu"
+            android:exported="true" />
         <provider
-            android:authorities="com.yabu.android.yabu.wiki"
             android:name="sql.WikiExtractsContentProvider"
-            android:exported="false"/>
+            android:authorities="com.yabu.android.yabu.wiki"
+            android:exported="false" />
 
         <service android:name="widget.FetchCursorDataIntentService" />
-
         <service
             android:name="widget.ListViewWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <activity android:name=".ui.InfoActivity"
+            android:launchMode="singleTop"
+            android:noHistory="true">
+        </activity>
     </application>
 
 </manifest>

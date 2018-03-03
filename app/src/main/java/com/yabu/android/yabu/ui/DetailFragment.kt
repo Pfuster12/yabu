@@ -16,6 +16,7 @@ import android.os.Handler
 import android.os.Parcelable
 import android.preference.PreferenceManager
 import android.support.design.widget.BottomSheetDialogFragment
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.NestedScrollView
 import android.text.SpannableString
@@ -307,6 +308,10 @@ class DetailFragment : BottomSheetDialogFragment() {
 
                 // update the spannable string to the text view
                 rootView.detail_extract.text = spannableString
+
+                if (mKanjis.size == 0) {
+                    Snackbar.make(furigana_parent, "No connection found to get readings.", Snackbar.LENGTH_SHORT).show()
+                }
             }
         }
 

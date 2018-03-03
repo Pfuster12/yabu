@@ -8,6 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="android:windowBackground">@color/colorBackground</item>
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowEnterTransition">@transition/start</item>
+        <item name="android:windowExitTransition">@transition/end</item>
     </style>
 
     <!-- Modal dialog styles -->

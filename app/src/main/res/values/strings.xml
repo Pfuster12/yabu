@@ -83,18 +83,22 @@
     <!-- Save words text -->
     <string name="no_words_big">There doesn\'t seem to be anything here&#8230;</string>
 
-    <!-- USer footer -->
+    <!--User Fragment-->
+
+    <!-- User footer -->
     <string name="footer_user_stats">User stats. Keep breaking barriers!</string>
 
     <!-- Articles read title stats -->
     <string name="article_user_stats_title">Wikis read this week</string>
-
 
     <!-- Articles read title stats -->
     <string name="article_heading_detail">Wiki Article</string>
 
     <!-- Pie chart review words -->
     <string name="review_user_stats_title">Review words overview</string>
+
+    <!-- Pie chart review words -->
+    <string name="info_title_1">大学</string>
 
     <!-- Widget -->
     <!-- Content description for no connection -->
@@ -110,10 +114,38 @@
     <string name="night_mode_content_description">Enable/Disable night mode</string>
     <!-- Content description for list_item_thumbnail -->
     <string name="thumbnail_content_description">Extract thumbnail</string>
-    <!-- Content description for list_item_thumbnail -->
+    <!-- Content description for yabu astronaut image -->
     <string name="yabu_astronaut">Yabu astronaut</string>
     <!-- Content description for no connection -->
     <string name="no_connection_content_description">No connection image</string>
+
+    <!--Info Start up Screens-->
+    <!--SKIP Text for info screens-->
+    <string name="info_skip_text">SKIP</string>
+    <string name="info_start_reading_text">START READING</string>
+
+    <!--Info example title-->
+    <string name="info_title_2">オープンソース</string>
+    <!--Info example title-->
+    <string name="info_body_1">日本の現在の学校教育制度では、高等学校もしくは中等教育学校卒業者、通常の課程による12年の特別教育を修了した者、またはこれと同等以上の</string>
+
+       <!--Info screen 1-->
+    <string name="info_screen_text_1">Read new Wiki articles from the daily page.</string>
+
+    <!--Info screen text 2-->
+    <string name="info_screen_text_2">Switch on night mode for easier reading on the eyes.</string>
+    <!--Info example title-->
+    <string name="info_body_2">オープンソース (open source) とは、言葉通りにはソースコードを公開することと理解できる。Open Source Initiative は、「オープンソース」と名乗るための要件を定義している（後述）</string>
+    <!--Info example title-->
+    <string name="info_body_callout_text">オープンソース (open source) とは、言葉通りにはソースコードを公開することと理解できる。Open Source Initiative は、「オープンソース」と名乗るための要件を定義している（後述）。
+1998年2月3日に、パロアルトにおいて、Netscapeブラウザのソースコードをどのような形で公開していくかという戦略会議の中でつけられた新たな用語である[1]。またオープンソースに関する本 "Open Sources: Voices from the Open Source Revolution" にも、マーケット向けのプロモーション用語として使う新しい言葉“オープンソース”を作り出したとある。</string>
+    <string name="info_callout_word">後述</string>
+    <string name="info_callout_reading">こうじゅつ</string>
+    <string name="info_callout_definition_1">1. mentioning later</string>
+    <string name="info_callout_definition_2">2. as described below</string>
+
+    <!--screen text 3-->
+    <string name="info_screen_text_3">See Kanji readings and definitions while reading a tap away.</string>
 
     <!-- Attributions -->
 

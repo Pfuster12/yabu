@@ -108,6 +108,7 @@ class WikiExtractRepository {
         // execute the extracts query json call
         val response = apiService.requestExtracts(titles).execute()
         if (response.isSuccessful) {
+            // delete entries only if there is internet connection
             wikiDao.deleteYesterdayEntries(context)
             // Grab the json response
             val jsonResponse = response?.body()

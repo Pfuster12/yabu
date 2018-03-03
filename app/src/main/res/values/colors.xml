@@ -9,6 +9,8 @@
 
     <!-- Background color -->
     <color name="colorBackground">@android:color/background_light</color>
+    <!-- Grey gradient scheme -->
+    <color name="colorDarkBackground">#1A1A1A</color>
     <!-- Background color -->
     <color name="colorTextWhite">@android:color/background_light</color>
     <color name="colorTabUnselected">@color/color100Grey</color>
